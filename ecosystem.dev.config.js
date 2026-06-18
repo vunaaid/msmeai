@@ -2,7 +2,7 @@
 // Start:  pm2 start ecosystem.dev.config.js
 // Infra (minio/mailpit) vẫn dùng từ ecosystem.config.js (prod) đang chạy.
 const ROOT = process.env.VSME_ROOT || __dirname;
-const ENV_FILE = `${ROOT}/.env`;
+const ENV_FILE = `${ROOT}/secrets/.env`;
 
 const common = {
   instances: 1,

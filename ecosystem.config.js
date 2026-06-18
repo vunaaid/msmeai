@@ -2,7 +2,7 @@
 // Start:  pm2 start ecosystem.config.js
 // ROOT mặc định là thư mục chứa file này; có thể override bằng env VSME_ROOT.
 const ROOT = process.env.VSME_ROOT || __dirname;
-const ENV_FILE = `${ROOT}/.env`;
+const ENV_FILE = `${ROOT}/secrets/.env`;
 const HOME = process.env.HOME;
 const MINIO_BIN = `${HOME}/.local/bin/minio`;
 const MINIO_DATA = `${ROOT}/data/minio`;

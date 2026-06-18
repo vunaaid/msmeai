@@ -22,6 +22,9 @@ token.txt
 *.credentials*
 copy-ssh-key.sh
 
+# Secrets — toàn bộ thông tin tài khoản, mật khẩu, API key, .env thật
+/secrets/
+
 # Git
 *.orig
 
