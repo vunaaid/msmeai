@@ -14,13 +14,13 @@
     "@vsme/audit": "workspace:*",
     "@vsme/llm": "workspace:*",
     "@vsme/ai-sdk": "workspace:*",
-    "bullmq": "^5.0.0",
+    "bullmq": "^5.79.0",
     "nodemailer": "^6.9.0"
   },
   "devDependencies": {
-    "tsx": "^4.19.0",
+    "tsx": "^4.22.4",
     "typescript": "^5.7.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.19.21",
     "@types/nodemailer": "^6.4.0"
   }
 }
