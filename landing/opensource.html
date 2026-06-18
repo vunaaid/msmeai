@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mã nguồn mở & Giấy phép — vSME</title>
+  <meta name="description" content="vSME là phần mềm source-available (vSME-SAL). Xem README, Giấy phép, Hướng dẫn đóng góp và CLA — bản tiếng Việt." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      fontFamily: { serif: ['Tahoma','Verdana','Geneva','sans-serif'], sans: ['Tahoma','Verdana','Geneva','sans-serif'] },
+      colors: { primary: { 50:'#ecfeff',100:'#cffafe',600:'#0891b2',700:'#0e7490',400:'#22d3ee' } }
+    } } }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .md-body { color:#374151; line-height:1.75; font-size:15px; }
+    .md-body h1 { font-size:1.9rem; font-weight:800; color:#0e7490; margin:1.6rem 0 .9rem; }
+    .md-body h2 { font-size:1.4rem; font-weight:700; color:#111827; margin:1.8rem 0 .7rem; border-bottom:1px solid #e5e7eb; padding-bottom:.3rem; }
+    .md-body h3 { font-size:1.12rem; font-weight:700; color:#1f2937; margin:1.3rem 0 .5rem; }
+    .md-body p { margin:.7rem 0; }
+    .md-body ul, .md-body ol { margin:.6rem 0 .6rem 1.4rem; }
+    .md-body ul { list-style:disc; } .md-body ol { list-style:decimal; }
+    .md-body li { margin:.25rem 0; }
+    .md-body a { color:#0891b2; text-decoration:underline; word-break:break-word; }
+    .md-body strong { color:#111827; font-weight:700; }
+    .md-body code { background:#f1f5f9; color:#be185d; padding:.1rem .35rem; border-radius:4px; font-size:.88em; }
+    .md-body pre { background:#0f172a; color:#e2e8f0; padding:1rem; border-radius:10px; overflow-x:auto; margin:.9rem 0; }
+    .md-body pre code { background:none; color:inherit; padding:0; }
+    .md-body table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:14px; }
+    .md-body th, .md-body td { border:1px solid #e5e7eb; padding:.55rem .7rem; text-align:left; vertical-align:top; }
+    .md-body th { background:#f8fafc; font-weight:700; }
+    .md-body blockquote { border-left:4px solid #22d3ee; background:#ecfeff; padding:.6rem 1rem; margin:.9rem 0; color:#155e75; border-radius:0 8px 8px 0; }
+    .md-body hr { border:0; border-top:1px solid #e5e7eb; margin:1.6rem 0; }
+    .md-body img { display:inline-block; margin:.2rem .3rem .2rem 0; }
+    .tab-btn.active { background:#0891b2; color:#fff; }
+    .doc-section { display:none; } .doc-section.active { display:block; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <!-- NAV -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <span class="text-xl font-serif font-black text-cyan-600">vSME</span>
+      </a>
+      <div class="flex items-center gap-3 text-sm">
+        <a href="index.html" class="text-gray-600 hover:text-cyan-600">← Trang chủ</a>
+        <a href="https://github.com/vunaaid/msmeai" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-gray-900 text-white hover:bg-gray-700">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="bg-gradient-to-b from-cyan-50 to-gray-50 border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 py-12 text-center">
+      <span class="inline-block px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs font-bold mb-4">SOURCE-AVAILABLE · vSME-SAL</span>
+      <h1 class="text-3xl md:text-4xl font-serif font-black text-gray-900 mb-3">Mã nguồn mở &amp; Giấy phép</h1>
+      <p class="text-gray-600 max-w-2xl mx-auto">vSME là phần mềm <strong>source-available</strong> — miễn phí cho tổ chức ≤ 4 người dùng thật (không tính agent AI). Dưới đây là toàn văn tài liệu (tiếng Việt).</p>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <div class="max-w-5xl mx-auto px-4 mt-8">
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button class="tab-btn active px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium hover:border-cyan-400" data-target="readme">📖 Giới thiệu (README)</button>
+      <button class="tab-btn px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium hover:border-cyan-400" data-target="license">⚖️ Giấy phép (vSME-SAL)</button>
+      <button class="tab-btn px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium hover:border-cyan-400" data-target="contributing">🤝 Đóng góp</button>
+      <button class="tab-btn px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium hover:border-cyan-400" data-target="cla">✍️ CLA</button>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-10 mb-16">
+      <div class="doc-section active" id="sec-readme"><div class="md-body" id="out-readme"></div></div>
+      <div class="doc-section" id="sec-license"><div class="md-body" id="out-license"></div></div>
+      <div class="doc-section" id="sec-contributing"><div class="md-body" id="out-contributing"></div></div>
+      <div class="doc-section" id="sec-cla"><div class="md-body" id="out-cla"></div></div>
+    </div>
+  </div>
+<script type="text/markdown" id="md-readme">
+# vSME
+
+> **AI-native ERP cho doanh nghiệp nhỏ & siêu nhỏ Việt Nam** — Kế toán · Nhân sự · Bán hàng · Hóa đơn & Thuế, vận hành bằng AI agents.
+>
+> *AI-native ERP for Vietnamese micro & small businesses.*
+
+![status](https://img.shields.io/badge/status-source--available-blue) ![license](https://img.shields.io/badge/license-vSME--SAL-orange)
+
+---
+
+## Tech Stack
+
+| Layer | Tech |
+|-------|------|
+| Framework | Next.js 15 + TypeScript 5 |
+| UI | Tailwind CSS 4 |
+| API | REST (Next.js Route Handlers) + Zod validation |
+| ORM | Prisma 6 |
+| Database | PostgreSQL 16 |
+| Cache/Queue | Redis 7 + BullMQ 5 |
+| Auth | NextAuth.js v5 + RBAC |
+| File Storage | MinIO |
+| Monorepo | Turborepo + pnpm |
+
+---
+
+## Cấu Trúc
+
+```
+vSME/
+├── apps/
+│   ├── web/          # Next.js 15 App (Port 3000)
+│   └── ai-worker/    # BullMQ Worker (standalone)
+├── packages/
+│   ├── db/           # Prisma schema + client
+│   ├── modules/      # Module Registry
+│   └── audit/        # Audit Log + Event Bus
+└── docker/           # Docker Compose
+```
+
+---
+
+## Quick Start
+
+### Yêu cầu
+- Node.js >= 22
+- Docker + Docker Compose
+- pnpm (tự cài qua script)
+
+### 1. Clone & Setup
+
+```bash
+git clone <repo>
+cd vSME
+
+# Cài pnpm (nếu chưa có)
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+source ~/.bashrc
+
+# Setup lần đầu (install + infra + migrate + seed)
+make setup
+```
+
+### 2. Chạy dev
+
+```bash
+make dev
+```
+
+Mở http://localhost:3000
+
+### 3. Đăng nhập
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@vsme.local` |
+| Password | `Admin@vSME2026!` |
+
+---
+
+## Commands
+
+```bash
+make help         # Xem tất cả commands
+make infra-up     # Khởi động PostgreSQL + Redis + MinIO
+make infra-down   # Dừng infrastructure
+make db-migrate   # Chạy DB migrations
+make db-seed      # Seed default data
+make db-studio    # Mở Prisma Studio (localhost:5555)
+make build        # Build tất cả packages
+```
+
+---
+
+## Checklist Deploy (Group 0: Foundation)
+
+```
+✅ PostgreSQL 16 — docker/docker-compose.yml
+✅ Redis 7 — docker/docker-compose.yml
+✅ MinIO — docker/docker-compose.yml
+✅ .env configured — .env.example
+✅ Prisma migrations — packages/db/prisma/schema.prisma
+✅ Seed data — packages/db/src/seed.ts
+✅ NextAuth.js v5 + RBAC — apps/web/src/lib/auth/
+✅ Module Registry — packages/modules/
+✅ Audit Log middleware — packages/audit/
+✅ Event Bus (BullMQ) — packages/audit/src/event-bus.ts
+✅ Notification Service — apps/web/src/lib/services/notification.service.ts
+✅ File Storage (MinIO) — apps/web/src/lib/services/file-storage.service.ts
+✅ Dynamic Sidebar — apps/web/src/components/layout/sidebar.tsx
+✅ REST APIs — apps/web/src/app/api/
+```
+
+---
+
+## Modules
+
+| # | Module | Key | Tier | Status |
+|---|--------|-----|------|--------|
+| 0 | Foundation | `foundation` | — | ✅ Bắt buộc |
+| 0 | Admin | `admin` | core | ✅ Bắt buộc |
+| 1 | Kế Toán Tổng Hợp | `gl` | core | 🟡 Chờ Phase 2 |
+| 2 | Hóa Đơn Điện Tử | `invoice` | core | 🟡 Chờ Phase 2 |
+| 3 | Phải Thu | `ar` | core | 🟡 Chờ Phase 2 |
+| 4 | Phải Trả | `ap` | core | 🟡 Chờ Phase 2 |
+| 5 | Ngân Quỹ | `cash` | core | 🟡 Chờ Phase 2 |
+| 6 | Bán Hàng & CRM | `sales` | extended | 🟡 Chờ Phase 3 |
+| 7 | Hàng Tồn Kho | `inventory` | extended | 🟡 Chờ Phase 3 |
+| 8 | Nhân Sự & Lương | `hr` | extended | 🟡 Chờ Phase 3 |
+| 9 | Tài Sản Cố Định | `assets` | extended | 🟡 Chờ Phase 3 |
+| 10 | Khai Báo Thuế | `tax` | core | 🟡 Chờ Phase 2 |
+| 11 | Báo Cáo & Dashboard | `reports` | core | 🟡 Chờ Phase 4 |
+| 12 | Hợp Đồng Điện Tử | `contracts` | extended | 🟡 Chờ Phase 3 |
+| 13 | AI Agent System | `ai-agents` | ai | 🟡 Chờ Phase 1 |
+
+---
+
+## 📄 License
+
+vSME là phần mềm **source-available** — **KHÔNG phải open source**.
+vSME is **source-available** software — **NOT open source**.
+
+- ✅ **Miễn phí / Free** cho tổ chức có **≤ 4 người dùng thật** (agent AI không tính),
+  tự host, không dùng để cạnh tranh. / for organizations with **≤ 4 Real Users**
+  (AI agents excluded), self-hosted, non-competing.
+- 💼 **Cần license thương mại / Commercial license required** nếu **≥ 5 người dùng thật**
+  hoặc dùng để cạnh tranh. / for **≥ 5 Real Users** or any competing use.
+- 🤝 Theo cơ chế **honor system** (không khóa tính năng). / honor system, never blocks features.
+
+Giấy phép: [vSME Source-Available License (vSME-SAL)](LICENSE) / [bản dịch tiếng Việt](LICENSE.vi.md) ·
+Tóm tắt: [LICENSING.md](LICENSING.md) / [LICENSING.vi.md](LICENSING.vi.md) ·
+Đóng góp: [CONTRIBUTING.md](CONTRIBUTING.md) · [CLA.md](CLA.md) · [SECURITY.md](SECURITY.md)
+
+Mua license thương mại / Commercial license: **vuna.aid@gmail.com**
+
+© 2026 Vũ Nguyễn Anh
+</script>
+<script type="text/markdown" id="md-license">
+Giấy phép Mã nguồn Mở hạn chế vSME (vSME-SAL) — Phiên bản 1.0
+
+Bản quyền (c) 2026 Vũ Nguyễn Anh  <vuna.aid@gmail.com>
+
+> ⚖️ BẢN DỊCH THAM KHẢO. Văn bản tiếng Anh [LICENSE](LICENSE) là bản DUY NHẤT có
+> hiệu lực pháp lý. Nếu có bất kỳ khác biệt nào về cách hiểu, bản tiếng Anh được ưu
+> tiên áp dụng. Bản dịch này chỉ nhằm giúp cộng đồng người Việt hiểu nội dung.
+
+Đây là giấy phép SOURCE-AVAILABLE (mã nguồn công khai). Đây KHÔNG phải giấy phép Open
+Source theo định nghĩa của Open Source Initiative, và phần mềm này KHÔNG phải phần mềm
+tự do (free software). Mã nguồn được công bố để cộng đồng đọc, học hỏi, sử dụng trong
+giới hạn dưới đây, và đóng góp cải tiến. Bằng việc sử dụng, sao chép, sửa đổi hoặc phân
+phối Phần mềm, Bạn chấp nhận và đồng ý với Giấy phép này.
+
+-------------------------------------------------------------------------------
+1. ĐỊNH NGHĨA
+-------------------------------------------------------------------------------
+
+"Phần mềm" nghĩa là mã nguồn vSME và mọi tập tin trong kho lưu trữ (repository) này,
+cùng mọi phiên bản đã sửa đổi hoặc phái sinh từ chúng.
+
+"Bên cấp phép" (Licensor) nghĩa là chủ sở hữu bản quyền nêu trên, cùng với người kế
+thừa và bên nhận chuyển nhượng (successors and assigns). Bên cấp phép có quyền chuyển
+nhượng Giấy phép này và mọi quyền theo nó (bao gồm quyền cấp giấy phép thương mại) cho
+cá nhân hoặc pháp nhân khác — ví dụ: công ty do chủ sở hữu bản quyền thành lập sau này —
+và mọi quyền cấp cho Bên cấp phép trong Giấy phép này đều có lợi cho bên nhận chuyển
+nhượng đó.
+
+"Bạn" (hoặc "Của Bạn") nghĩa là cá nhân hoặc tổ chức thực hiện các quyền theo Giấy phép
+này, cùng với mọi pháp nhân kiểm soát, bị kiểm soát bởi, hoặc cùng chịu sự kiểm soát
+chung với Bạn ("Bên liên kết" — Affiliates). Đối với mọi giới hạn trong Giấy phép này,
+hành vi và số Người dùng thật của Bạn và các Bên liên kết được cộng gộp và tính chung.
+
+"Người dùng thật" (Real User) nghĩa là một con người riêng biệt được cấp thông tin đăng
+nhập để truy cập hoặc vận hành Phần mềm. Số Người dùng thật là tổng số người riêng biệt
+đang giữ thông tin đăng nhập tại bất kỳ thời điểm nào, bất kể đồng thời hay đang hoạt
+động, cộng gộp trên mọi bản sao, instance và triển khai do Bạn và các Bên liên kết vận
+hành. Các agent tự động, AI worker, bot, tài khoản dịch vụ (service account), cron job
+và các tác nhân phi-con-người khác KHÔNG được tính là Người dùng thật.
+
+"Sử dụng Sản xuất" (Production Use) nghĩa là bất kỳ việc sử dụng Phần mềm nào khác ngoài
+mục đích phát triển, kiểm thử, đánh giá, hoặc thử nghiệm cá nhân.
+
+"Sử dụng Cạnh tranh" (Competing Use) nghĩa là việc cung cấp Phần mềm, hoặc một phiên bản
+đã sửa đổi/phái sinh của nó, cho bất kỳ bên thứ ba nào — dù có hay không thu phí — trong
+một sản phẩm hoặc dịch vụ mà: (a) thay thế cho Phần mềm; (b) thay thế cho bất kỳ sản phẩm
+hoặc dịch vụ nào mà Bên cấp phép cung cấp dựa trên Phần mềm tính đến thời điểm Bạn sử
+dụng; hoặc (c) cung cấp cùng chức năng hoặc chức năng tương tự về cơ bản với Phần mềm
+hoặc với sản phẩm thương mại của Bên cấp phép.
+
+-------------------------------------------------------------------------------
+2. CẤP QUYỀN (GÓI MIỄN PHÍ)
+-------------------------------------------------------------------------------
+
+Tùy thuộc vào các điều khoản dưới đây, Bên cấp phép cấp cho Bạn một giấy phép toàn cầu,
+miễn phí bản quyền, không độc quyền, vĩnh viễn để sử dụng, sao chép, sửa đổi và tự lưu
+trữ (self-host) Phần mềm trong môi trường Sản xuất, HOÀN TOÀN MIỄN PHÍ, với điều kiện CẢ
+HAI điều sau luôn đúng tại mọi thời điểm:
+
+  (a) GIỚI HẠN QUY MÔ — số Người dùng thật không vượt quá BỐN (4); và
+
+  (b) KHÔNG CẠNH TRANH — việc sử dụng của Bạn không phải là Sử dụng Cạnh tranh.
+
+Bạn cũng có thể sao chép, sửa đổi và phân phối lại mã nguồn cho mục đích phi-Sản-xuất
+(học tập, đóng góp, fork để phát triển), tuân theo Mục 3.
+
+-------------------------------------------------------------------------------
+3. PHÂN PHỐI LẠI VÀ THÔNG BÁO
+-------------------------------------------------------------------------------
+
+Nếu Bạn phân phối Phần mềm hoặc bất kỳ phiên bản đã sửa đổi/phái sinh nào:
+
+  (a) RÀNG BUỘC KẾ TIẾP (Flow-down) — Mọi bản sao, phiên bản sửa đổi và tác phẩm phái
+      sinh đều tiếp tục chịu sự điều chỉnh đầy đủ của Giấy phép này. Bạn không được cấp
+      cho bất kỳ người nhận nào quyền lớn hơn quyền Bạn đang có theo Giấy phép này, và
+      mọi người nhận như vậy đều bị ràng buộc bởi Giấy phép này.
+
+  (b) HIỂN THỊ — Bạn phải kèm theo một bản sao đầy đủ, không sửa đổi của Giấy phép này
+      với mỗi bản sao, và giữ lại mọi thông báo bản quyền, giấy phép và ghi công có
+      trong Phần mềm.
+
+  (c) KHÔNG GỠ BỎ HOẶC VÔ HIỆU HÓA — Bạn không được gỡ bỏ, vô hiệu hóa, thay đổi hoặc
+      che giấu (i) bất kỳ thông báo bản quyền, giấy phép hoặc ghi công nào trong Phần
+      mềm, hoặc (ii) thông báo giấy phép mà Phần mềm hiển thị (ví dụ: lúc khởi động hoặc
+      trong giao diện người dùng). Bạn không được xuyên tạc các điều khoản của Giấy phép
+      này.
+
+-------------------------------------------------------------------------------
+4. KHI NÀO CẦN GIẤY PHÉP THƯƠNG MẠI
+-------------------------------------------------------------------------------
+
+Cần một giấy phép thương mại riêng từ Bên cấp phép nếu MỘT TRONG HAI điều kiện sau xảy ra:
+
+  - số Người dùng thật từ NĂM (5) trở lên; hoặc
+  - Bạn muốn thực hiện bất kỳ Sử dụng Cạnh tranh nào, hoặc bất kỳ việc sử dụng nào khác
+    bị loại trừ bởi Mục 2.
+
+Để có giấy phép thương mại, liên hệ: vuna.aid@gmail.com
+
+-------------------------------------------------------------------------------
+5. CƠ CHẾ TỰ GIÁC (KHÔNG CƯỠNG CHẾ KỸ THUẬT)
+-------------------------------------------------------------------------------
+
+Phần mềm không chứa license key, kích hoạt, đo đếm sử dụng hay bất kỳ cơ chế cưỡng chế
+nào, và sẽ tiếp tục hoạt động bất kể số lượng Người dùng thật. Việc tuân thủ các giới
+hạn trong Giấy phép này dựa trên thiện chí và sự trung thực của Bạn. Việc không có cưỡng
+chế kỹ thuật KHÔNG làm Bên cấp phép từ bỏ bất kỳ quyền nào: vượt quá gói miễn phí, hoặc
+thực hiện Sử dụng Cạnh tranh, mà không có giấy phép thương mại là vi phạm Giấy phép này.
+
+-------------------------------------------------------------------------------
+6. GIẤY PHÉP SÁNG CHẾ VÀ CHẤM DỨT QUYỀN SÁNG CHẾ
+-------------------------------------------------------------------------------
+
+Tùy thuộc vào việc Bạn tuân thủ Giấy phép này, Bên cấp phép cấp cho Bạn một giấy phép
+toàn cầu, miễn phí bản quyền, không độc quyền, theo các yêu sách sáng chế mà Bên cấp
+phép có thể cấp phép và bị xâm phạm một cách tất yếu bởi Phần mềm, để tạo ra và sử dụng
+Phần mềm cho các mục đích được phép trong Giấy phép này. Nếu Bạn hoặc Bên liên kết của
+Bạn khởi xướng hoặc đưa ra một yêu sách (bao gồm cả phản tố) cáo buộc rằng Phần mềm xâm
+phạm hoặc góp phần xâm phạm bất kỳ bằng sáng chế nào, thì mọi giấy phép cấp cho Bạn theo
+Giấy phép này lập tức chấm dứt.
+
+-------------------------------------------------------------------------------
+7. ĐÓNG GÓP
+-------------------------------------------------------------------------------
+
+Các đóng góp cho dự án này được điều chỉnh bởi Thỏa thuận Đóng góp (xem CLA.md). Bằng
+việc gửi một đóng góp, Bạn đồng ý với các điều khoản của nó, bao gồm việc cấp cho Bên cấp
+phép quyền cấp phép lại (re-license) đóng góp của Bạn, kể cả theo giấy phép thương mại
+của Bên cấp phép.
+
+-------------------------------------------------------------------------------
+8. KHÔNG TỰ ĐỘNG CHUYỂN THÀNH OPEN SOURCE
+-------------------------------------------------------------------------------
+
+Giấy phép này không có ngày chuyển đổi (change date). Phần mềm không tự động chuyển thành
+giấy phép open source vào bất kỳ thời điểm nào. Mỗi phiên bản phát hành vẫn ở dưới Giấy
+phép này trừ khi Bên cấp phép cấp phép lại một cách rõ ràng.
+
+-------------------------------------------------------------------------------
+9. NHÃN HIỆU
+-------------------------------------------------------------------------------
+
+Giấy phép này không cấp quyền sử dụng tên thương mại, nhãn hiệu, nhãn hiệu dịch vụ, logo
+hay tên sản phẩm của Bên cấp phép hoặc các Bên liên kết, ngoại trừ việc sử dụng hợp lý và
+thông thường để mô tả nguồn gốc của Phần mềm.
+
+-------------------------------------------------------------------------------
+10. TỪ CHỐI BẢO ĐẢM VÀ GIỚI HẠN TRÁCH NHIỆM
+-------------------------------------------------------------------------------
+
+PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN TRẠNG" (AS IS), KHÔNG KÈM BẤT KỲ BẢO ĐẢM NÀO, DÙ MINH THỊ
+HAY NGỤ Ý, BAO GỒM NHƯNG KHÔNG GIỚI HẠN Ở CÁC BẢO ĐẢM VỀ KHẢ NĂNG THƯƠNG MẠI, SỰ PHÙ HỢP
+CHO MỘT MỤC ĐÍCH CỤ THỂ, VÀ KHÔNG XÂM PHẠM. TRONG MỌI TRƯỜNG HỢP, BÊN CẤP PHÉP KHÔNG CHỊU
+TRÁCH NHIỆM ĐỐI VỚI BẤT KỲ KHIẾU NẠI, THIỆT HẠI HAY TRÁCH NHIỆM PHÁP LÝ NÀO, DÙ TRONG MỘT
+VỤ KIỆN HỢP ĐỒNG, NGOÀI HỢP ĐỒNG (TORT) HAY KHÁC, PHÁT SINH TỪ, DO HOẶC LIÊN QUAN ĐẾN
+PHẦN MỀM HOẶC VIỆC SỬ DỤNG HAY GIAO DỊCH KHÁC VỚI PHẦN MỀM.
+
+-------------------------------------------------------------------------------
+11. CHẤM DỨT
+-------------------------------------------------------------------------------
+
+Bất kỳ việc sử dụng nào vi phạm Giấy phép này sẽ tự động chấm dứt các quyền của Bạn theo
+Giấy phép cho mọi phiên bản của Phần mềm. Nếu Bạn chấm dứt toàn bộ vi phạm trong vòng ba
+mươi (30) ngày kể từ khi biết về vi phạm đó, và đây là vi phạm đầu tiên của Bạn, các
+quyền của Bạn sẽ được khôi phục. Nếu không, Bạn phải ngừng Sử dụng Sản xuất trừ khi và
+cho đến khi Bạn có được giấy phép thương mại. Các Mục 5, 9, 10 và 12 vẫn còn hiệu lực sau
+khi chấm dứt.
+
+-------------------------------------------------------------------------------
+12. LUẬT ÁP DỤNG VÀ GIẢI QUYẾT TRANH CHẤP
+-------------------------------------------------------------------------------
+
+Giấy phép này được điều chỉnh và diễn giải theo pháp luật nước Cộng hòa Xã hội Chủ nghĩa
+Việt Nam, không xét đến các quy tắc xung đột pháp luật. Mọi tranh chấp phát sinh từ hoặc
+liên quan đến Giấy phép này sẽ được đưa ra tòa án có thẩm quyền của Việt Nam, trừ khi các
+bên có thỏa thuận khác bằng văn bản. Nếu bất kỳ điều khoản nào của Giấy phép này bị tuyên
+là vô hiệu hoặc không thể thực thi, các điều khoản còn lại vẫn giữ nguyên hiệu lực.
+
+HẾT CÁC ĐIỀU KHOẢN
+</script>
+<script type="text/markdown" id="md-contributing">
+# Đóng góp cho vSME
+
+> 🇬🇧 English: [CONTRIBUTING.md](CONTRIBUTING.md) · 🇻🇳 Bản tiếng Việt (bạn đang đọc).
+
+Cảm ơn bạn quan tâm đóng góp! Dự án hoan nghênh ý tưởng, báo lỗi, và pull request.
+
+## Trước khi bắt đầu
+
+- vSME dùng giấy phép **source-available** ([LICENSE](LICENSE)) — không phải open source.
+- Mọi đóng góp đều phải tuân theo **Thỏa thuận Đóng góp (CLA)** — xem [CLA.vi.md](CLA.vi.md).
+  Lần đầu mở Pull Request, bot CLA sẽ yêu cầu bạn ký (một lần duy nhất).
+
+## Quy trình
+
+1. **Mở issue trước** với thay đổi lớn để thống nhất hướng đi.
+2. Fork → tạo branch từ `main` (đặt tên `feat/...` hoặc `fix/...`).
+3. Cài đặt và chạy dự án theo [CLAUDE.md](CLAUDE.md) (pnpm + turbo).
+4. Trước khi commit:
+   - `pnpm db:check` — đảm bảo DB khớp schema.
+   - `pnpm type-check` — không lỗi kiểu.
+5. Commit theo Conventional Commits (`feat:`, `fix:`, `docs:`...).
+6. Mở Pull Request mô tả rõ thay đổi và lý do.
+
+## Quyền lợi & nghĩa vụ của người đóng góp
+
+**Bạn giữ bản quyền** phần code mình viết. Qua CLA, bạn **cấp phép** (không chuyển
+nhượng) cho chủ dự án quyền sử dụng và re-license đóng góp đó, kể cả trong bản thương mại.
+
+- Bạn được ghi nhận trong lịch sử commit và `CONTRIBUTORS.md`.
+- Đóng góp được phát hành dưới cùng giấy phép của dự án.
+- Việc gửi PR **không** tạo ra quyền đồng sở hữu sản phẩm hay quyền lợi tài chính.
+  Các thỏa thuận maintainer/chia sẻ doanh thu (nếu có) được bàn riêng, ngoài CLA này.
+
+## Báo lỗi bảo mật
+
+Không mở issue công khai cho lỗ hổng bảo mật. Gửi riêng tới **vuna.aid@gmail.com**.
+</script>
+<script type="text/markdown" id="md-cla">
+# Thỏa thuận Đóng góp (CLA)
+
+> Bản tiếng Anh [CLA.md](CLA.md) là bản có hiệu lực pháp lý. Bản tiếng Việt này
+> chỉ để tham khảo. Nếu có khác biệt, bản tiếng Anh được ưu tiên.
+
+Khi gửi đóng góp cho dự án (một "Đóng góp"), bạn đồng ý với các điều khoản sau.
+
+## 1. Định nghĩa
+
+- **"Bạn"** — cá nhân hoặc tổ chức thực hiện Đóng góp.
+- **"Đóng góp"** — bất kỳ tác phẩm gốc nào (code, tài liệu, vật liệu khác) bạn chủ
+  động gửi vào dự án.
+- **"Chủ dự án"** — chủ sở hữu bản quyền của vSME, cùng với người kế thừa và bên
+  nhận chuyển nhượng (successors and assigns). Chủ dự án có quyền chuyển nhượng các
+  quyền theo CLA này cho cá nhân hoặc pháp nhân khác (ví dụ: công ty mà chủ sở hữu
+  bản quyền thành lập sau này), và CLA tiếp tục ràng buộc và có lợi cho bên nhận
+  chuyển nhượng đó mà không cần xin lại sự đồng ý của Bạn.
+
+## 2. Bạn giữ quyền sở hữu
+
+Bạn giữ toàn bộ quyền sở hữu đối với Đóng góp của mình. Thỏa thuận này **không
+chuyển nhượng** quyền sở hữu, mà chỉ cấp các quyền sử dụng dưới đây.
+
+## 3. Cấp quyền cho Chủ dự án
+
+Bạn cấp cho Chủ dự án quyền vĩnh viễn, toàn cầu, không độc quyền, miễn phí bản
+quyền, không thể thu hồi để:
+
+- sử dụng, sao chép, sửa đổi, tạo tác phẩm phái sinh, hiển thị và phân phối Đóng
+  góp của bạn; và
+- **re-license (cấp phép lại) Đóng góp của bạn theo bất kỳ điều khoản nào, bao gồm
+  giấy phép source-available của vSME và giấy phép thương mại/độc quyền riêng.**
+
+Đây chính là điều cho phép Chủ dự án bán license thương mại của vSME có chứa Đóng
+góp của bạn.
+
+## 4. Cấp phép sáng chế (patent)
+
+Bạn cấp cho Chủ dự án và người nhận phần mềm quyền sáng chế vĩnh viễn, toàn cầu,
+không độc quyền, miễn phí, không thể thu hồi để tạo, sử dụng, bán và phân phối phần
+mềm, đối với các yêu sách sáng chế mà bạn sở hữu và bị Đóng góp của bạn xâm phạm.
+
+## 5. Cam đoan của bạn
+
+Bạn cam đoan rằng:
+
+- Mỗi Đóng góp là sáng tạo gốc của bạn, hoặc bạn có quyền gửi nó.
+- Nếu công ty của bạn có quyền với tài sản trí tuệ bạn tạo ra, bạn đã được phép gửi
+  Đóng góp, hoặc công ty đã từ bỏ quyền đó.
+- Đóng góp không cố ý vi phạm quyền của bên thứ ba.
+
+## 6. Không có nghĩa vụ tiếp nhận
+
+Chủ dự án không có nghĩa vụ phải chấp nhận, merge hay sử dụng bất kỳ Đóng góp nào.
+
+## 7. Không phát sinh quyền lợi khác
+
+Việc gửi Đóng góp **không** cho bạn quyền sở hữu dự án, không phát sinh quyền lợi tài
+chính, và không tạo ra vai trò nào trong dự án. Mọi thỏa thuận maintainer, chia sẻ
+doanh thu hay hợp tác phải được thống nhất riêng bằng văn bản, độc lập với CLA này.
+
+## 8. Luật áp dụng
+
+CLA này được điều chỉnh bởi pháp luật nước Cộng hòa Xã hội Chủ nghĩa Việt Nam. Mọi
+tranh chấp phát sinh sẽ được đưa ra tòa án có thẩm quyền của Việt Nam, trừ khi các bên
+có thỏa thuận khác bằng văn bản.
+
+---
+
+*Ký qua bot CLA Assistant khi bạn mở Pull Request đầu tiên.*
+</script>
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-10">
+    <div class="max-w-5xl mx-auto px-4 text-center text-sm text-gray-400">
+      <p class="mb-2">© 2026 Vũ Nguyễn Anh · vSME — Source-available (vSME-SAL)</p>
+      <p>Văn bản pháp lý ràng buộc là file <a href="https://github.com/vunaaid/msmeai/blob/main/LICENSE" class="text-cyan-400 hover:underline" target="_blank" rel="noopener">LICENSE</a> (tiếng Anh). Bản tiếng Việt chỉ để tham khảo.</p>
+      <p class="mt-2">Mua license thương mại: <a href="mailto:vuna.aid@gmail.com" class="text-cyan-400 hover:underline">vuna.aid@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    function render(id) {
+      var src = document.getElementById('md-' + id).textContent;
+      document.getElementById('out-' + id).innerHTML = marked.parse(src);
+    }
+    ['readme','license','contributing','cla'].forEach(render);
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var t = btn.getAttribute('data-target');
+        document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.doc-section').forEach(function (s) { s.classList.remove('active'); });
+        document.getElementById('sec-' + t).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
