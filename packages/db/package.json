@@ -1,0 +1,34 @@
+{
+  "name": "@vsme/db",
+  "version": "0.1.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./types": "./src/types.ts"
+  },
+  "scripts": {
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migrate": "echo '⛔ Đã chặn: DB local là CLONE quản lý bằng db push. prisma migrate dev sẽ phát hiện drift và RESET SẠCH toàn bộ dữ liệu (đã từng xảy ra 2026-05-29). Dùng: pnpm db:push' && exit 1",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:seed": "tsx src/seed.ts",
+    "db:studio": "prisma studio",
+    "db:reset": "echo '⛔ Đã chặn: db:reset (prisma migrate reset) sẽ XOÁ toàn bộ dữ liệu. Nếu thực sự muốn, chạy lệnh prisma trực tiếp.' && exit 1",
+    "db:migrate:dev:DANGER": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "@prisma/extension-accelerate": "*",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@vsme/storage": "workspace:*",
+    "prisma": "^6.0.0",
+    "tsx": "^4.19.0",
+    "@types/bcryptjs": "^2.4.6",
+    "typescript": "^5.7.0"
+  }
+}

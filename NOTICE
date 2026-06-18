@@ -1,0 +1,28 @@
+vSME — Nền tảng quản lý công ty SME tích hợp AI
+Copyright (c) 2026 Vũ Nguyễn Anh  <vuna.aid@gmail.com>
+
+This product is licensed under the vSME Source-Available License (vSME-SAL),
+Version 1.0. It is SOURCE-AVAILABLE software, NOT open source.
+
+  Free for organizations with 4 or fewer Real Users (AI agents are not counted),
+  self-hosted, and non-competing. Five (5) or more Real Users, or any competing
+  use, requires a commercial license: vuna.aid@gmail.com
+
+  See the LICENSE file for the full, binding terms. A Vietnamese reference
+  translation is provided in LICENSE.vi.md.
+
+-------------------------------------------------------------------------------
+Sản phẩm này được cấp phép theo Giấy phép Mã nguồn Mở hạn chế vSME (vSME-SAL),
+Phiên bản 1.0. Đây là phần mềm SOURCE-AVAILABLE, KHÔNG phải open source.
+
+  Miễn phí cho tổ chức có 4 Người dùng thật trở xuống (không tính agent AI),
+  tự lưu trữ và không cạnh tranh. Từ 5 Người dùng thật trở lên, hoặc bất kỳ việc
+  sử dụng cạnh tranh nào, cần giấy phép thương mại: vuna.aid@gmail.com
+
+-------------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS
+
+This software depends on third-party open-source packages, each distributed
+under its own license (see each package's LICENSE and the project's package.json
+/ pnpm-lock.yaml). Those licenses apply to their respective components and are
+not superseded by the vSME-SAL.

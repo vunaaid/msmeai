@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    "paths": {
+      "@vsme/db": ["../../packages/db/src/index.ts"],
+      "@vsme/db/*": ["../../packages/db/src/*"],
+      "@vsme/modules": ["../../packages/modules/src/index.ts"],
+      "@vsme/modules/*": ["../../packages/modules/src/*"],
+      "@vsme/audit": ["../../packages/audit/src/index.ts"],
+      "@vsme/audit/*": ["../../packages/audit/src/*"],
+      "@vsme/ai-sdk": ["../../packages/ai-sdk/src/index.ts"],
+      "@vsme/ai-sdk/*": ["../../packages/ai-sdk/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

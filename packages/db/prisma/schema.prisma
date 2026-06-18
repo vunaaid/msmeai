@@ -1,0 +1,2269 @@
+// vSME — Prisma Schema
+// Foundation: Auth, RBAC, ModuleRegistry, AuditLog, EventBus, PlatformServices
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ENUMS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum AccountType {
+  system_admin // Platform-level admin — quản lý toàn bộ hệ thống
+  company_admin // Company-level admin — quản trị users/roles trong công ty
+  user // Người dùng thường
+  agent // Nhân sự ảo — vị trí do AI Agent đảm nhiệm (không đăng nhập)
+}
+
+enum RoleLevel {
+  company_admin // Admin công ty
+  board // HĐQT
+  c_suite // C-Suite (CEO, CFO, CTO, ...)
+  manager // Trưởng phòng
+  staff // Nhân viên
+  system // System / AI Agent
+}
+
+enum PermissionAction {
+  read
+  write
+  delete
+  approve
+  export
+  configure
+}
+
+enum PermissionScope {
+  self // Chỉ record của bản thân
+  team // Toàn team (cùng department)
+  dept // Toàn phòng ban
+  company // Toàn công ty
+}
+
+enum AuditAction {
+  create
+  update
+  delete
+  approve
+  reject
+  login
+  logout
+  export
+  toggle_module
+}
+
+enum EventStatus {
+  pending
+  processing
+  processed
+  failed
+  dead_letter
+}
+
+enum NotificationChannel {
+  inapp
+  email
+  sms
+}
+
+enum FileEntityType {
+  invoice
+  contract
+  report
+  employee
+  product
+  attachment
+  export
+  document
+  template
+}
+
+enum DocumentFileType {
+  docx
+  xlsx
+  pptx
+  md
+}
+
+enum AiMode {
+  full // AI tự thực thi
+  assistant // AI chỉ đề xuất
+}
+
+enum ModuleTier {
+  core
+  extended
+  ai
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WORK MANAGEMENT ENUMS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum WorkType {
+  operational // Công việc vận hành hàng ngày — không cần dự án
+  project_task // Công việc thuộc dự án
+}
+
+enum WorkItemStatus {
+  draft // Mới tạo, chưa giao
+  pending_approval // Chờ cấp trên duyệt
+  active // Đã duyệt, đang chờ thực hiện
+  in_progress // Người nhận đã bắt đầu
+  completed // Hoàn thành
+  cancelled // Hủy bỏ
+}
+
+enum WorkItemPriority {
+  urgent // Khẩn cấp
+  high // Cao
+  normal // Bình thường
+  low // Thấp
+}
+
+enum ProjectStatus {
+  planning // Đang lập kế hoạch
+  active // Đang triển khai
+  on_hold // Tạm dừng
+  completed // Hoàn thành
+  cancelled // Hủy bỏ
+}
+
+// ─── Ghi chép (Notes) ────────────────────────────────────────────────────────
+
+enum NoteBlockType {
+  text // đoạn văn bản
+  todo // checkbox — ứng viên để tạo công việc
+  voice // block ghi âm + transcript
+}
+
+enum TranscriptStatus {
+  pending // chờ xử lý
+  processing // đang bóc nội dung
+  done // xong
+  failed // lỗi
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM 1: COMPANY & AUTH/RBAC
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Company {
+  id         String  @id @default(uuid())
+  name       String
+  taxCode    String  @unique @map("tax_code")
+  address    String?
+  phone      String?
+  email      String?
+  website    String?
+  logoUrl    String? @map("logo_url")
+  slug       String? @unique @map("slug") // URL-safe subdomain identifier
+  ai_mode    AiMode  @default(assistant)
+  isActive   Boolean @default(true) @map("is_active")
+  isPlatform Boolean @default(false) @map("is_platform") // Platform company cho system admin
+
+  // Settings JSON (per-company configuration)
+  settings      Json @default("{}")
+  modulesConfig Json @default("{}") @map("modules_config")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users             User[]
+  roles             Role[]
+  moduleConfigs     ModuleConfig[]
+  featureFlags      FeatureFlag[]
+  auditLogs         AuditLog[]
+  domainEvents      DomainEvent[]
+  notifications     Notification[]
+  fileRecords       FileRecord[]
+  projects          Project[]
+  workItems         WorkItem[]
+  companyAgents     CompanyAgent[]
+  recurringWork     RecurringWork[]
+  documents         Document[]
+  documentTemplates DocumentTemplate[]
+  folders           Folder[]
+  notes             Note[]
+  chatConversations ChatConversation[]
+  llmCredentials    CompanyLlmCredential[]
+
+  // HR — Quản trị nhân sự
+  departments    Department[]
+  positions      Position[]
+  employees      Employee[]
+  candidates     Candidate[]
+  payrollPeriods PayrollPeriod[]
+
+  // Đối tác (KH/NCC) + công nợ + ngân quỹ + tài sản
+  partners             Partner[]
+  debts                Debt[]
+  cashAccounts         CashAccount[]
+  cashTransactions     CashTransaction[]
+  assets               Asset[]
+  capitalContributions CapitalContribution[]
+  salesOrders          SalesOrder[]
+  customerInteractions CustomerInteraction[]
+  products             Product[]
+  stockMovements       StockMovement[]
+  expenses             Expense[]
+  taxSetting           TaxSetting?
+  taxReturns           TaxReturn[]
+
+  // GL — Kế toán tổng hợp
+  fiscalYears    FiscalYear[]
+  fiscalPeriods  FiscalPeriod[]
+  glAccounts     GlAccount[]
+  journals       Journal[]
+  journalEntries JournalEntry[]
+
+  @@map("companies")
+}
+
+model User {
+  id             String      @id @default(uuid())
+  companyId      String      @map("company_id")
+  email          String
+  name           String
+  passwordHash   String      @map("password_hash")
+  roleId         String?     @map("role_id")
+  extraRoleIds   String[]    @default([]) @map("extra_role_ids") // Vai trò bổ sung (HĐQT, ban...) — CHỈ cho việc định kỳ + đọc tài liệu + dashboard, KHÔNG cấp quyền
+  departmentId   String?     @map("department_id")
+  managerId      String?     @map("manager_id") // Cấp trên trực tiếp (self-relation)
+  companyAgentId String?     @unique @map("company_agent_id") // Nếu là nhân sự ảo: trỏ tới CompanyAgent (bộ não AI)
+  avatarUrl      String?     @map("avatar_url")
+  phone          String?
+  isActive       Boolean     @default(true) @map("is_active")
+  isSuperAdmin   Boolean     @default(false) @map("is_super_admin")
+  accountType    AccountType @default(user) @map("account_type")
+
+  // NextAuth fields
+  emailVerified DateTime? @map("email_verified")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  lastLoginAt DateTime? @map("last_login_at")
+
+  // Relations
+  company       Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role          Role?                    @relation(fields: [roleId], references: [id])
+  manager       User?                    @relation("UserManager", fields: [managerId], references: [id], onDelete: SetNull)
+  reports       User[]                   @relation("UserManager")
+  companyAgent  CompanyAgent?            @relation("AgentPersona", fields: [companyAgentId], references: [id], onDelete: SetNull)
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  fileRecords   FileRecord[]
+  notifPrefs    NotificationPreference[]
+
+  // Work management
+  createdWorkItems   WorkItem[]             @relation("WorkItemCreator")
+  assignedWorkItems  WorkItem[]             @relation("WorkItemAssignee")
+  managedProjects    Project[]              @relation("ProjectManager")
+  createdProjects    Project[]              @relation("ProjectCreator")
+  projectMemberships ProjectMember[]
+  workComments       WorkComment[]
+  pushSubscriptions  UserPushSubscription[]
+  createdAgents      CompanyAgent[]         @relation("CompanyAgentCreator")
+  notes              Note[]
+  chatMessages       ChatMessage[]
+  chatParticipants   ChatParticipant[]
+  employee           Employee?              @relation("EmployeeUser")
+  ownedFolders       Folder[]               @relation("FolderOwner")
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([email])
+  @@index([managerId])
+  @@map("users")
+}
+
+model Role {
+  id          String    @id @default(uuid())
+  companyId   String    @map("company_id")
+  name        String
+  level       RoleLevel
+  description String?
+  isSystem    Boolean   @default(false) @map("is_system") // Không xóa được role hệ thống
+  isDefault   Boolean   @default(false) @map("is_default")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  users         User[]
+  permissions   RolePermission[]
+  recurringWork RecurringWork[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("roles")
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  moduleKey   String           @map("module_key")
+  action      PermissionAction
+  scope       PermissionScope  @default(company)
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  roles RolePermission[]
+
+  @@unique([moduleKey, action, scope])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String @map("role_id")
+  permissionId String @map("permission_id")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  sessionToken String   @unique @map("session_token")
+  expiresAt    DateTime @map("expires_at")
+  deviceInfo   Json?    @map("device_info") // { ua, ip, os, browser }
+  ipAddress    String?  @map("ip_address")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM 2: MODULE REGISTRY
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model ModuleConfig {
+  id        String @id @default(uuid())
+  companyId String @map("company_id")
+  moduleKey String @map("module_key") // 'gl' | 'invoice' | 'ar' | ...
+
+  enabled Boolean    @default(false)
+  tier    ModuleTier @default(core)
+
+  // Per-module config (VD: starting invoice number, fiscal year, ...)
+  settings Json @default("{}")
+
+  enabledAt  DateTime? @map("enabled_at")
+  enabledBy  String?   @map("enabled_by") // userId
+  disabledAt DateTime? @map("disabled_at")
+  disabledBy String?   @map("disabled_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, moduleKey])
+  @@index([companyId])
+  @@map("module_configs")
+}
+
+model FeatureFlag {
+  id        String  @id @default(uuid())
+  companyId String  @map("company_id")
+  moduleKey String  @map("module_key")
+  flagKey   String  @map("flag_key")
+  enabled   Boolean @default(false)
+  value     Json? // Có thể lưu giá trị phức tạp hơn boolean
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, moduleKey, flagKey])
+  @@map("feature_flags")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM 3: AUDIT LOG & EVENT BUS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  companyId  String      @map("company_id")
+  userId     String?     @map("user_id") // null = system action
+  action     AuditAction
+  moduleKey  String      @map("module_key")
+  entityType String      @map("entity_type") // Table name
+  entityId   String      @map("entity_id")
+  dataBefore Json?       @map("data_before")
+  dataAfter  Json?       @map("data_after")
+  ipAddress  String?     @map("ip_address")
+  userAgent  String?     @map("user_agent")
+  metadata   Json? // Extra context
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
+
+  // Append-only: không có updatedAt, không allow delete via app
+  @@index([companyId, moduleKey])
+  @@index([companyId, entityType, entityId])
+  @@index([companyId, userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model DomainEvent {
+  id        String @id @default(uuid())
+  companyId String @map("company_id")
+
+  // Convention: {module}.{entity}.{action}
+  // VD: 'invoice.outgoing.confirmed', 'gl.journal.posted'
+  eventType    String      @map("event_type")
+  sourceModule String      @map("source_module")
+  payload      Json
+  status       EventStatus @default(pending)
+  attempts     Int         @default(0)
+  lastError    String?     @map("last_error")
+
+  publishedAt DateTime  @default(now()) @map("published_at")
+  processedAt DateTime? @map("processed_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId, eventType])
+  @@index([status, publishedAt])
+  @@map("domain_events")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM 4: PLATFORM SERVICES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// 4a. Notification Service
+model Notification {
+  id        String              @id @default(uuid())
+  companyId String              @map("company_id")
+  userId    String              @map("user_id")
+  channel   NotificationChannel @default(inapp)
+  type      String // VD: 'approval.requested', 'invoice.sent', 'ai.task.completed'
+  title     String
+  body      String
+  data      Json? // Deep link, metadata
+  readAt    DateTime?           @map("read_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([companyId])
+  @@map("notifications")
+}
+
+model NotificationTemplate {
+  id           String              @id @default(uuid())
+  eventType    String              @map("event_type")
+  channel      NotificationChannel
+  subject      String?
+  bodyTemplate String              @map("body_template") // Handlebars template
+  isActive     Boolean             @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([eventType, channel])
+  @@map("notification_templates")
+}
+
+model NotificationPreference {
+  id        String              @id @default(uuid())
+  userId    String              @map("user_id")
+  eventType String              @map("event_type")
+  channel   NotificationChannel
+  enabled   Boolean             @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventType, channel])
+  @@map("notification_preferences")
+}
+
+// 4b. File Storage Service
+model FileRecord {
+  id           String         @id @default(uuid())
+  companyId    String         @map("company_id")
+  moduleKey    String         @map("module_key")
+  entityType   FileEntityType @map("entity_type")
+  entityId     String?        @map("entity_id")
+  filename     String
+  originalName String         @map("original_name")
+  mimeType     String         @map("mime_type")
+  size         Int // bytes
+  storagePath  String         @map("storage_path") // MinIO path
+  bucket       String         @default("vsme-files")
+  uploadedBy   String         @map("uploaded_by") // userId
+  isPublic     Boolean        @default(false) @map("is_public")
+  metadata     Json?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at") // Soft delete
+
+  company  Company @relation(fields: [companyId], references: [id])
+  uploader User    @relation(fields: [uploadedBy], references: [id])
+
+  @@index([companyId, moduleKey])
+  @@index([companyId, entityType, entityId])
+  @@map("file_records")
+}
+
+// 4c. Documents & Templates (Word/Excel/PPTX/Markdown)
+// Template hệ thống: companyId = null + isSystem = true ⇒ KHÔNG được xóa.
+model DocumentTemplate {
+  id          String           @id @default(uuid())
+  companyId   String?          @map("company_id") // null = template hệ thống dùng chung
+  name        String
+  description String?
+  category    String?
+  fileType    DocumentFileType @map("file_type")
+
+  bucket       String @default("vsme-files")
+  storagePath  String @map("storage_path")
+  originalName String @map("original_name")
+  mimeType     String @map("mime_type")
+  size         Int // bytes
+
+  variables Json? // mô tả các {{placeholder}} cho AI/UI điền
+  isSystem  Boolean @default(false) @map("is_system") // true ⇒ không cho xóa/sửa
+
+  createdBy String    @map("created_by") // userId
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at") // Soft delete (chỉ template công ty)
+
+  company   Company?   @relation(fields: [companyId], references: [id])
+  documents Document[]
+
+  @@index([companyId, fileType])
+  @@index([isSystem])
+  @@map("document_templates")
+}
+
+// Loại thư mục ảo: company = chia sẻ toàn công ty; personal = chỉ chủ sở hữu xem.
+enum FolderType {
+  company
+  personal
+}
+
+// Thư mục ảo lưu tài liệu. Dạng cây (parentId). Mỗi user có 1 thư mục gốc cá nhân
+// (isRoot + type=personal) được tạo tự động. Thư mục con có thể gắn theo module.
+model Folder {
+  id        String     @id @default(uuid())
+  companyId String     @map("company_id")
+  name      String
+  type      FolderType @default(company)
+  ownerId   String?    @map("owner_id") // bắt buộc khi type=personal
+  parentId  String?    @map("parent_id") // null = thư mục gốc
+  moduleKey String?    @map("module_key") // gắn với module (vd "tax","hr"...) — tùy chọn
+  isRoot    Boolean    @default(false) @map("is_root") // thư mục gốc tự tạo
+  createdBy String     @map("created_by") // userId
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  deletedAt DateTime?  @map("deleted_at") // Soft delete
+
+  company   Company    @relation(fields: [companyId], references: [id])
+  owner     User?      @relation("FolderOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  parent    Folder?    @relation("FolderTree", fields: [parentId], references: [id])
+  children  Folder[]   @relation("FolderTree")
+  documents Document[]
+
+  @@index([companyId, type, ownerId])
+  @@index([parentId])
+  @@map("folders")
+}
+
+model Document {
+  id               String           @id @default(uuid())
+  companyId        String           @map("company_id")
+  name             String
+  fileType         DocumentFileType @map("file_type")
+  templateId       String?          @map("template_id") // nếu tạo từ template
+  folderId         String?          @map("folder_id") // thư mục ảo chứa tài liệu (null = chưa phân loại)
+  currentVersionId String?          @unique @map("current_version_id")
+
+  createdBy      String    @map("created_by") // userId
+  // Quyền đọc theo role: mảng roleId được phép xem. null/[] = toàn công ty.
+  allowedRoleIds Json?     @map("allowed_role_ids")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at") // Soft delete
+
+  company        Company           @relation(fields: [companyId], references: [id])
+  template       DocumentTemplate? @relation(fields: [templateId], references: [id])
+  folder         Folder?           @relation(fields: [folderId], references: [id])
+  currentVersion DocumentVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id])
+  versions       DocumentVersion[] @relation("DocumentVersions")
+
+  @@index([companyId, fileType])
+  @@index([folderId])
+  @@map("documents")
+}
+
+model DocumentVersion {
+  id          String @id @default(uuid())
+  documentId  String @map("document_id")
+  versionNo   Int    @map("version_no")
+  bucket      String @default("vsme-files")
+  storagePath String @map("storage_path")
+  mimeType    String @map("mime_type")
+  size        Int // bytes
+
+  createdBy String   @map("created_by") // userId
+  createdAt DateTime @default(now()) @map("created_at")
+
+  document Document  @relation("DocumentVersions", fields: [documentId], references: [id], onDelete: Cascade)
+  current  Document? @relation("CurrentVersion")
+
+  @@unique([documentId, versionNo])
+  @@index([documentId])
+  @@map("document_versions")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// APPROVAL WORKFLOW (dùng chung cho nhiều module)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum ApprovalStatus {
+  pending
+  approved
+  rejected
+  cancelled
+  expired
+}
+
+model ApprovalRequest {
+  id          String         @id @default(uuid())
+  companyId   String         @map("company_id")
+  moduleKey   String         @map("module_key")
+  entityType  String         @map("entity_type")
+  entityId    String         @map("entity_id")
+  requestedBy String         @map("requested_by") // userId
+  assignedTo  String?        @map("assigned_to") // userId hoặc roleId
+  status      ApprovalStatus @default(pending)
+  title       String
+  description String?
+  amount      Float? // Nếu liên quan đến tiền
+  decision    String? // Lý do approve/reject
+  decidedBy   String?        @map("decided_by")
+  decidedAt   DateTime?      @map("decided_at")
+  expiresAt   DateTime?      @map("expires_at")
+  metadata    Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([companyId, status])
+  @@index([assignedTo, status])
+  @@index([requestedBy])
+  @@map("approval_requests")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AI AGENT SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum AISessionStatus {
+  active
+  completed
+  archived
+}
+
+enum AITaskStatus {
+  queued
+  running
+  completed
+  failed
+  cancelled
+  awaiting_approval
+}
+
+enum AIApprovalDecision {
+  approved
+  rejected
+}
+
+enum LLMProvider {
+  claude
+  gemini
+  ollama
+  openai // OpenAI-compatible: DeepSeek, Kimi/Moonshot, Qwen-API, GPT… (khác base_url + model)
+}
+
+model AISession {
+  id             String          @id @default(uuid())
+  companyId      String          @map("company_id")
+  userId         String          @map("user_id")
+  agentId        String          @map("agent_id") // VD: "ceo", "cfo", "hr_manager"
+  companyAgentId String?         @map("company_agent_id") // FK → CompanyAgent (nếu dùng DB-backed agent)
+  mode           AiMode          @default(assistant)
+  status         AISessionStatus @default(active)
+  title          String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  messages     AIMessage[]
+  tasks        AITask[]
+  companyAgent CompanyAgent? @relation("CompanyAgentSessions", fields: [companyAgentId], references: [id])
+
+  @@index([companyId, userId])
+  @@index([companyId, agentId])
+  @@index([companyAgentId])
+  @@map("ai_sessions")
+}
+
+model AIMessage {
+  id           String       @id @default(uuid())
+  sessionId    String       @map("session_id")
+  role         String // "user" | "assistant" | "system" | "tool"
+  content      String
+  toolCalls    Json?        @map("tool_calls") // [{id, name, input}]
+  toolResults  Json?        @map("tool_results") // [{tool_call_id, content}]
+  provider     LLMProvider? // Provider used for this message
+  model        String?
+  inputTokens  Int?         @map("input_tokens")
+  outputTokens Int?         @map("output_tokens")
+  cacheHit     Boolean      @default(false) @map("cache_hit") // Prompt cache hit
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  session AISession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("ai_messages")
+}
+
+model AITask {
+  id          String       @id @default(uuid())
+  companyId   String       @map("company_id")
+  sessionId   String?      @map("session_id")
+  agentId     String       @map("agent_id")
+  title       String
+  description String?
+  status      AITaskStatus @default(queued)
+  priority    Int          @default(5) // 1=highest, 10=lowest
+  input       Json
+  output      Json?
+  error       String?
+  metadata    Json? // skill context, tool calls used, etc.
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  completedAt DateTime? @map("completed_at")
+
+  session          AISession?          @relation(fields: [sessionId], references: [id])
+  approvalRequests AIApprovalRequest[]
+
+  @@index([companyId, status])
+  @@index([companyId, agentId])
+  @@map("ai_tasks")
+}
+
+model AIApprovalRequest {
+  id              String              @id @default(uuid())
+  companyId       String              @map("company_id")
+  taskId          String              @map("task_id")
+  agentId         String              @map("agent_id")
+  action          String // VD: "approve_payment", "hire_candidate"
+  authorityResult String              @map("authority_result") // "NEEDS_APPROVAL" | "ESCALATE"
+  reason          String // Lý do cần approval
+  approver        String // userId hoặc role level ("board", "c_suite")
+  actionInput     Json                @map("action_input") // Input data cho action
+  decision        AIApprovalDecision? // null = chưa quyết
+  decidedBy       String?             @map("decided_by") // userId
+  decidedAt       DateTime?           @map("decided_at")
+  comment         String?
+  expiresAt       DateTime?           @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  task AITask @relation(fields: [taskId], references: [id])
+
+  @@index([companyId, approver])
+  @@index([taskId])
+  @@map("ai_approval_requests")
+}
+
+model LLMUsageLog {
+  id           String      @id @default(uuid())
+  companyId    String      @map("company_id")
+  sessionId    String?     @map("session_id")
+  taskId       String?     @map("task_id")
+  agentId      String?     @map("agent_id")
+  provider     LLMProvider
+  model        String
+  inputTokens  Int         @map("input_tokens")
+  outputTokens Int         @map("output_tokens")
+  cacheTokens  Int         @default(0) @map("cache_tokens") // Cached input tokens (Claude)
+  costUsd      Float       @default(0) @map("cost_usd")
+  latencyMs    Int         @map("latency_ms")
+  success      Boolean     @default(true)
+  error        String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([companyId, provider])
+  @@index([companyId, createdAt])
+  @@map("llm_usage_logs")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM 6: WORK MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// 6a. Project — container cho công việc dự án
+model Project {
+  id          String           @id @default(uuid())
+  companyId   String           @map("company_id")
+  title       String
+  description String?
+  status      ProjectStatus    @default(planning)
+  priority    WorkItemPriority @default(normal)
+
+  managerId String @map("manager_id") // userId — người phụ trách dự án
+  createdBy String @map("created_by") // userId — người tạo (Chủ tịch/CEO)
+
+  startDate   DateTime? @map("start_date")
+  dueDate     DateTime? @map("due_date")
+  completedAt DateTime? @map("completed_at")
+
+  // AI phân tích và đề xuất breakdown
+  aiBreakdown Json?     @map("ai_breakdown") // [{title, description, assignTo, priority, dueDate}]
+  approvedBy  String?   @map("approved_by")
+  approvedAt  DateTime? @map("approved_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company   Company         @relation(fields: [companyId], references: [id])
+  manager   User            @relation("ProjectManager", fields: [managerId], references: [id])
+  creator   User            @relation("ProjectCreator", fields: [createdBy], references: [id])
+  workItems WorkItem[]
+  members   ProjectMember[]
+  epics     Epic[]
+  sprints   Sprint[]
+
+  @@index([companyId, status])
+  @@index([companyId, managerId])
+  @@map("projects")
+}
+
+model ProjectMember {
+  projectId String @map("project_id")
+  userId    String @map("user_id")
+  role      String @default("member") // "manager" | "member" | "viewer"
+
+  addedAt DateTime @default(now()) @map("added_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@id([projectId, userId])
+  @@map("project_members")
+}
+
+// 6b. WorkItem — công việc cụ thể (vận hành hoặc theo dự án)
+model WorkItem {
+  id        String @id @default(uuid())
+  companyId String @map("company_id")
+
+  workType  WorkType @default(operational) @map("work_type")
+  projectId String?  @map("project_id") // null = operational
+  parentId  String?  @map("parent_id") // null = top-level task
+
+  // Jira-style: gắn việc vào Epic / Sprint của dự án
+  epicId      String? @map("epic_id")
+  sprintId    String? @map("sprint_id")
+  storyPoints Int?    @map("story_points") // điểm ước lượng
+  boardOrder  Int     @default(0) @map("board_order") // thứ tự thẻ trong cột Kanban
+
+  title       String
+  description String?
+  note        String?          @map("note") // Ghi chú tự do của người thực hiện/người giao
+  status      WorkItemStatus   @default(draft)
+  priority    WorkItemPriority @default(normal)
+
+  createdBy  String  @map("created_by") // userId người giao
+  assignedTo String? @map("assigned_to") // userId người nhận
+
+  dueDate     DateTime? @map("due_date")
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  // AI phân tích — chỉ dùng ở top-level task
+  aiBreakdown    Json?     @map("ai_breakdown")
+  watchers       Json?     @map("watchers") // [userId] — nhân sự theo dõi
+  aiAssignee     String?   @map("ai_assignee") // agentId nếu giao cho trợ lý AI
+  approvedBy     String?   @map("approved_by")
+  approvedAt     DateTime? @map("approved_at")
+  completionNote String?   @map("completion_note")
+
+  // Hàng đợi worker AI: agentJob=true → worker scan & thực thi (load skill nhân viên).
+  agentJob      Boolean @default(false) @map("agent_job")
+  agentAttempts Int     @default(0) @map("agent_attempts")
+  agentContext  Json?   @map("agent_context") // { conversationId, convType, memberIds, approverName }
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company    Company       @relation(fields: [companyId], references: [id])
+  project    Project?      @relation(fields: [projectId], references: [id])
+  epic       Epic?         @relation(fields: [epicId], references: [id])
+  sprint     Sprint?       @relation(fields: [sprintId], references: [id])
+  creator    User          @relation("WorkItemCreator", fields: [createdBy], references: [id])
+  assignee   User?         @relation("WorkItemAssignee", fields: [assignedTo], references: [id])
+  parent     WorkItem?     @relation("WorkItemChildren", fields: [parentId], references: [id])
+  children   WorkItem[]    @relation("WorkItemChildren")
+  comments   WorkComment[]
+  noteBlocks NoteBlock[]
+
+  @@index([companyId, status])
+  @@index([companyId, assignedTo, status])
+  @@index([companyId, createdBy])
+  @@index([projectId])
+  @@index([parentId])
+  @@index([epicId])
+  @@index([sprintId])
+  @@map("work_items")
+}
+
+// 6c. Epic — nhóm việc lớn trong dự án (Jira-style)
+model Epic {
+  id          String  @id @default(uuid())
+  companyId   String  @map("company_id")
+  projectId   String  @map("project_id")
+  title       String
+  description String?
+  color       String  @default("#6366f1") // màu nhãn epic
+  status      String  @default("open") // open | done
+  order       Int     @default(0)
+  createdBy   String  @map("created_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workItems WorkItem[]
+
+  @@index([projectId])
+  @@map("epics")
+}
+
+// 6d. Sprint — chu kỳ làm việc trong dự án (Jira-style)
+model Sprint {
+  id        String    @id @default(uuid())
+  companyId String    @map("company_id")
+  projectId String    @map("project_id")
+  name      String
+  goal      String?
+  status    String    @default("planned") // planned | active | completed
+  startDate DateTime? @map("start_date")
+  endDate   DateTime? @map("end_date")
+  order     Int       @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workItems WorkItem[]
+
+  @@index([projectId])
+  @@map("sprints")
+}
+
+model WorkComment {
+  id         String @id @default(uuid())
+  workItemId String @map("work_item_id")
+  userId     String @map("user_id")
+  content    String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  workItem WorkItem @relation(fields: [workItemId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@index([workItemId])
+  @@map("work_comments")
+}
+
+// ─── PWA Push Subscriptions ──────────────────────────────────────────────────
+model UserPushSubscription {
+  id       String @id @default(uuid())
+  userId   String @map("user_id")
+  endpoint String @unique
+  p256dh   String // public key
+  auth     String // auth secret
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_push_subscriptions")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CHAT — Trò chuyện realtime (1-1 & nhóm)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model ChatConversation {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  type      String   @default("direct") // "direct" | "group"
+  title     String? // tên nhóm (chỉ dùng cho type=group)
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at") // = thời điểm tin nhắn mới nhất → sort danh sách
+
+  company      Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  participants ChatParticipant[]
+  messages     ChatMessage[]
+
+  @@index([companyId])
+  @@map("chat_conversations")
+}
+
+model ChatParticipant {
+  conversationId String    @map("conversation_id")
+  userId         String    @map("user_id")
+  joinedAt       DateTime  @default(now()) @map("joined_at")
+  lastReadAt     DateTime? @map("last_read_at") // null = chưa đọc gì → để tính unread
+
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@index([userId])
+  @@map("chat_participants")
+}
+
+model ChatMessage {
+  id             String   @id @default(uuid())
+  conversationId String   @map("conversation_id")
+  userId         String   @map("user_id")
+  content        String   @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("chat_messages")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM 8: COMPANY AI AGENTS (DB-backed, per-company configuration)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model CompanyAgent {
+  id        String @id @default(uuid())
+  companyId String @map("company_id")
+
+  /// Slug định danh agent VD: "ceo", "hr_manager", "custom_agent_1"
+  agentId String @map("agent_id")
+
+  displayName String  @map("display_name")
+  description String? @db.Text
+  department  String?
+
+  /// "board" | "c_suite" | "manager" | "staff" | "special"
+  level String @default("staff")
+
+  /// System prompt — định nghĩa nhân cách, quyền hạn, phong cách của agent
+  systemPrompt String @map("system_prompt") @db.Text
+
+  /// Provider ưu tiên
+  provider LLMProvider @default(claude)
+
+  /// Model alias hoặc full ID: "sonnet", "opus", "haiku", "claude-sonnet-4-6", v.v.
+  model String @default("sonnet")
+
+  /// Cho phép agent dùng tools (Bash, Read, Edit...) qua Claude CLI
+  allowTools Boolean @default(false) @map("allow_tools")
+
+  /// Icon hiển thị (emoji hoặc tên lucide icon)
+  icon String @default("Bot")
+
+  /// Agent đang hoạt động không
+  isActive Boolean @default(true) @map("is_active")
+
+  /// true = agent tự tạo từ UI, false = import từ .skill.md file
+  isCustom Boolean @default(true) @map("is_custom")
+
+  /// Thứ tự hiển thị trong danh sách
+  sortOrder Int @default(100) @map("sort_order")
+
+  /// Bộ credential LLM dùng chung của công ty mà agent này sử dụng (null = fallback env)
+  credentialId String? @map("credential_id")
+
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company    Company               @relation(fields: [companyId], references: [id])
+  creator    User                  @relation("CompanyAgentCreator", fields: [createdBy], references: [id])
+  credential CompanyLlmCredential? @relation(fields: [credentialId], references: [id], onDelete: SetNull)
+  sessions   AISession[]           @relation("CompanyAgentSessions")
+  persona    User?                 @relation("AgentPersona") // Nhân sự ảo tương ứng (1-1)
+
+  @@unique([companyId, agentId])
+  @@index([companyId, isActive])
+  @@map("company_agents")
+}
+
+/// Bộ credential LLM dùng chung cấp công ty — admin khai báo provider + API key (mã hóa)
+/// để các agent tham chiếu. API key KHÔNG bao giờ trả về client (chỉ trả `hasKey`).
+model CompanyLlmCredential {
+  id           String      @id @default(uuid())
+  companyId    String      @map("company_id")
+  label        String // VD: "Claude-prod", "Gemini"
+  provider     LLMProvider @default(claude)
+  baseUrl      String?     @map("base_url") // Ollama host / Anthropic gateway tuỳ chọn
+  apiKeyEnc    String?     @map("api_key_enc") @db.Text // AES-256-GCM ciphertext; null cho Ollama
+  defaultModel String?     @map("default_model")
+  isActive     Boolean     @default(true) @map("is_active")
+  isDefault    Boolean     @default(false) @map("is_default")
+  createdBy    String      @map("created_by")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  company Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  agents  CompanyAgent[]
+
+  @@unique([companyId, label])
+  @@index([companyId, isActive])
+  @@map("company_llm_credentials")
+}
+
+// ─── Recurring Work (công việc định kỳ tự sinh lên workboard) ─────────────────
+
+enum RecurringCadence {
+  weekly
+  monthly
+  quarterly
+  yearly
+}
+
+model RecurringWork {
+  id        String @id @default(uuid())
+  companyId String @map("company_id")
+  roleId    String @map("role_id") // vai trò được giao
+
+  title         String
+  description   String?
+  cadence       RecurringCadence
+  module        String?
+  priority      WorkItemPriority @default(normal)
+  dueOffsetDays Int              @default(0) @map("due_offset_days")
+  active        Boolean          @default(true)
+  source        String           @default("custom") // "default" | "custom"
+
+  /// Ghi đè ngày thực hiện theo từng kỳ: { "<periodKey>": "YYYY-MM-DD" }
+  dueDateOverrides Json? @map("due_date_overrides")
+
+  lastGeneratedAt DateTime? @map("last_generated_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role    Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, active])
+  @@index([roleId])
+  @@map("recurring_work")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM: GHI CHÉP (NOTES)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Note {
+  id        String @id @default(uuid())
+  companyId String @map("company_id")
+  userId    String @map("user_id") // chủ sở hữu — note là dữ liệu cá nhân (scope self)
+
+  noteDate DateTime @map("note_date") @db.Date // NGÀY của ghi chép (nhiều note/ngày)
+  title    String?
+  content  String? // markdown gộp từ các block — để tìm kiếm & xem nhanh
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blocks  NoteBlock[]
+
+  @@index([companyId, userId, noteDate])
+  @@map("notes")
+}
+
+model NoteBlock {
+  id       String        @id @default(uuid())
+  noteId   String        @map("note_id")
+  type     NoteBlockType @default(text)
+  position Int           @default(0) // thứ tự block trong note
+
+  text    String? // text / transcript / nhãn todo
+  checked Boolean @default(false) // cho type=todo
+
+  // Audio (cho type=voice)
+  audioBucket        String?           @map("audio_bucket")
+  audioPath          String?           @map("audio_path") // MinIO storagePath
+  audioDuration      Int?              @map("audio_duration") // giây
+  transcriptStatus   TranscriptStatus? @map("transcript_status")
+  transcriptProgress Int?              @map("transcript_progress") // % bóc nội dung (0-100) cho audio dài
+
+  // Công việc đã tạo từ block này (chống tạo trùng)
+  workItemId String? @map("work_item_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  note     Note      @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  workItem WorkItem? @relation(fields: [workItemId], references: [id])
+
+  @@index([noteId, position])
+  @@map("note_blocks")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MODULE: GL — KẾ TOÁN TỔNG HỢP (General Ledger)
+// Trung tâm kế toán: Chart of Accounts (TT200) + bút toán kép.
+// Mọi phân hệ (Invoice, AR/AP, Cash, Assets) đẩy bút toán về đây; BCTC kết xuất từ đây.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum GlPeriodStatus {
+  open // đang mở — cho phép ghi/sửa bút toán
+  closed // đã đóng — khóa, không sửa bút toán đã ghi sổ
+}
+
+enum GlAccountType {
+  asset // Tài sản (loại 1, 2)
+  liability // Nợ phải trả (loại 3)
+  equity // Vốn chủ sở hữu (loại 4)
+  revenue // Doanh thu (loại 5, 7)
+  expense // Chi phí (loại 6, 8)
+  determination // Xác định kết quả KD (loại 9 — TK 911)
+  off_balance // Tài khoản ngoài bảng (loại 0)
+}
+
+enum JournalType {
+  general // Nhật ký chung
+  cash_receipt // Thu tiền
+  cash_payment // Chi tiền
+  purchase // Mua hàng
+  sales // Bán hàng
+}
+
+enum JournalEntryStatus {
+  draft // Nháp
+  pending // Chờ duyệt
+  posted // Đã ghi sổ
+  reversed // Đã bị đảo (entry gốc)
+  cancelled // Đã hủy
+}
+
+model FiscalYear {
+  id        String         @id @default(uuid())
+  companyId String         @map("company_id")
+  year      Int
+  status    GlPeriodStatus @default(open)
+  startDate DateTime       @map("start_date")
+  endDate   DateTime       @map("end_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  periods FiscalPeriod[]
+
+  @@unique([companyId, year])
+  @@index([companyId])
+  @@map("fiscal_years")
+}
+
+model FiscalPeriod {
+  id           String         @id @default(uuid())
+  companyId    String         @map("company_id")
+  fiscalYearId String         @map("fiscal_year_id")
+  month        Int // 1-12
+  status       GlPeriodStatus @default(open)
+  startDate    DateTime       @map("start_date")
+  endDate      DateTime       @map("end_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company    Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  fiscalYear FiscalYear     @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+  entries    JournalEntry[]
+
+  @@unique([fiscalYearId, month])
+  @@index([companyId])
+  @@map("fiscal_periods")
+}
+
+model GlAccount {
+  id        String        @id @default(uuid())
+  companyId String        @map("company_id")
+  code      String // mã TK theo TT200: 111, 1311, 51111...
+  name      String
+  type      GlAccountType
+  level     Int           @default(1) // cấp 1 (3 số) → 2 → 3...
+  parentId  String?       @map("parent_id")
+  isLeaf    Boolean       @default(true) @map("is_leaf") // chỉ TK lá mới nhập bút toán
+  isActive  Boolean       @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company  Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  parent   GlAccount?    @relation("GlAccountTree", fields: [parentId], references: [id])
+  children GlAccount[]   @relation("GlAccountTree")
+  lines    JournalLine[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([parentId])
+  @@map("gl_accounts")
+}
+
+model Journal {
+  id        String      @id @default(uuid())
+  companyId String      @map("company_id")
+  code      String // NKC, PT, PC, NKMH, NKBH
+  name      String
+  type      JournalType @default(general)
+  isActive  Boolean     @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  entries JournalEntry[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("journals")
+}
+
+model JournalEntry {
+  id        String  @id @default(uuid())
+  companyId String  @map("company_id")
+  journalId String  @map("journal_id")
+  periodId  String? @map("period_id")
+
+  number      String // BT2026-001
+  date        DateTime
+  description String?
+  status      JournalEntryStatus @default(draft)
+
+  totalDebit  Decimal @default(0) @map("total_debit") @db.Decimal(18, 2)
+  totalCredit Decimal @default(0) @map("total_credit") @db.Decimal(18, 2)
+
+  // Nguồn phát sinh (khi bút toán do module khác tạo tự động)
+  sourceModule String? @map("source_module") // 'invoice' | 'ar' | 'ap' | 'cash' | 'assets'
+  sourceRef    String? @map("source_ref") // id chứng từ gốc
+
+  // Đảo bút toán
+  reversedEntryId String? @map("reversed_entry_id") // entry này đảo của entry nào
+
+  createdBy String    @map("created_by") // userId
+  postedBy  String?   @map("posted_by") // userId KTT ghi sổ
+  postedAt  DateTime? @map("posted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  journal       Journal        @relation(fields: [journalId], references: [id])
+  period        FiscalPeriod?  @relation(fields: [periodId], references: [id])
+  reversedEntry JournalEntry?  @relation("EntryReversal", fields: [reversedEntryId], references: [id])
+  reversals     JournalEntry[] @relation("EntryReversal")
+  lines         JournalLine[]
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+  @@index([periodId])
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id        String @id @default(uuid())
+  entryId   String @map("entry_id")
+  accountId String @map("account_id")
+  lineNo    Int    @default(0) @map("line_no")
+
+  debit       Decimal @default(0) @db.Decimal(18, 2)
+  credit      Decimal @default(0) @db.Decimal(18, 2)
+  description String?
+
+  // Tham chiếu chứng từ dòng (vd: hóa đơn, khách hàng...)
+  refType String? @map("ref_type")
+  refId   String? @map("ref_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account GlAccount    @relation(fields: [accountId], references: [id])
+
+  @@index([entryId])
+  @@index([accountId])
+  @@map("journal_lines")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM: HỢP ĐỒNG (Contracts)
+// Theo phân tích docs/contracts-module-analysis.md. Theo precedent ApprovalRequest:
+// không khai báo relation tới Company/User (chỉ lưu id + index) để khu trú thay đổi.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum ContractDirection {
+  inbound // Đầu vào — công ty là bên MUA/thuê/sử dụng → NCC → phải trả (AP)
+  outbound // Đầu ra — công ty là bên BÁN/cho thuê/cung cấp → KH → phải thu (AR)
+  internal // Nội bộ (vd: lao động)
+}
+
+enum ContractType {
+  sales // Mua bán hàng hóa
+  service // Cung cấp/sử dụng dịch vụ
+  lease // Thuê/cho thuê
+  labor // Lao động
+  nda // Bảo mật
+  principle // Hợp đồng nguyên tắc/khung
+  construction // Thi công/xây lắp
+  other
+}
+
+enum ContractStatus {
+  draft // Đang soạn
+  review // Đang review nội bộ
+  pending_approval // Chờ duyệt
+  pending_signature // Chờ các bên ký
+  active // Đã ký, đang hiệu lực
+  completed // Hoàn thành nghĩa vụ
+  expired // Hết hạn
+  terminated // Chấm dứt sớm
+  cancelled // Hủy khi chưa hiệu lực
+}
+
+enum PaymentMethod {
+  cash // Tiền mặt
+  bank_transfer // Chuyển khoản
+  offset // Cấn trừ công nợ
+  installment // Trả góp
+  letter_of_credit // L/C
+  e_wallet // Ví điện tử
+  other
+}
+
+enum PaymentTerm {
+  prepaid // Trả trước 100%
+  on_delivery // Trả khi giao/nghiệm thu
+  net_days // Công nợ N ngày
+  milestone // Theo cột mốc/giai đoạn
+  recurring // Định kỳ
+  retention // Giữ lại bảo hành
+}
+
+enum ScheduleStatus {
+  pending // Chưa tới hạn
+  invoiced // Đã xuất/nhận hóa đơn
+  partially_paid // Thanh toán một phần
+  paid // Đã thanh toán
+  overdue // Quá hạn
+}
+
+enum SignatoryStatus {
+  pending
+  signed
+  declined
+}
+
+model Contract {
+  id        String            @id @default(uuid())
+  companyId String            @map("company_id")
+  number    String // HĐ2026-001 — auto theo direction
+  title     String
+  direction ContractDirection
+  type      ContractType
+  status    ContractStatus    @default(draft)
+
+  // Đối tác (snapshot + link mềm)
+  partyType           String  @map("party_type") // customer | vendor | employee | other
+  partyId             String? @map("party_id") // FK mềm tới Customer/Vendor/User
+  employeeId          String? @map("employee_id") // HĐ lao động → link Employee (HR)
+  partyName           String  @map("party_name")
+  partyTaxCode        String? @map("party_tax_code")
+  partyAddress        String? @map("party_address")
+  partyRepresentative String? @map("party_representative")
+
+  // Giá trị
+  currency       String  @default("VND")
+  exchangeRate   Float   @default(1) @map("exchange_rate")
+  taxInclusive   Boolean @default(true) @map("tax_inclusive")
+  valueBeforeTax Decimal @default(0) @map("value_before_tax") @db.Decimal(18, 2)
+  taxRate        Float   @default(0) @map("tax_rate")
+  taxAmount      Decimal @default(0) @map("tax_amount") @db.Decimal(18, 2)
+  value          Decimal @default(0) @db.Decimal(18, 2) // tổng giá trị (sau thuế)
+
+  // Thanh toán
+  paymentMethod PaymentMethod? @map("payment_method")
+  paymentTerm   PaymentTerm?   @map("payment_term")
+  netDays       Int?           @map("net_days")
+
+  // Thời hạn
+  signDate  DateTime? @map("sign_date")
+  startDate DateTime? @map("start_date")
+  endDate   DateTime? @map("end_date")
+  autoRenew Boolean   @default(false) @map("auto_renew")
+
+  // Mẫu & file
+  templateId       String? @map("template_id")
+  currentVersionId String? @unique @map("current_version_id")
+  signedFileId     String? @map("signed_file_id") // FileRecord PDF bất biến sau ký
+
+  // Quản trị
+  ownerId        String    @map("owner_id")
+  createdBy      String    @map("created_by")
+  allowedRoleIds Json?     @map("allowed_role_ids") // quyền đọc theo role; null = toàn công ty
+  description    String?
+  metadata       Json?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  versions    ContractVersion[]
+  signatories ContractSignatory[]
+  schedules   ContractPaymentSchedule[]
+  employee    Employee?                 @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  debts       Debt[]
+
+  @@unique([companyId, number])
+  @@index([companyId, direction, status])
+  @@index([companyId, partyId])
+  @@map("contracts")
+}
+
+model ContractVersion {
+  id          String   @id @default(uuid())
+  contractId  String   @map("contract_id")
+  versionNo   Int      @map("version_no")
+  bucket      String   @default("vsme-files")
+  storagePath String   @map("storage_path")
+  mimeType    String   @map("mime_type")
+  size        Int      @default(0)
+  changeNote  String?  @map("change_note")
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, versionNo])
+  @@index([contractId])
+  @@map("contract_versions")
+}
+
+model ContractSignatory {
+  id         String          @id @default(uuid())
+  contractId String          @map("contract_id")
+  party      String // internal | external
+  name       String
+  email      String?
+  phone      String?
+  roleInDeal String?         @map("role_in_deal") // "Bên A - Giám đốc"...
+  status     SignatoryStatus @default(pending)
+  signMethod String?         @map("sign_method") // usb_token | soft_cert | otp
+  signedAt   DateTime?       @map("signed_at")
+  signedIp   String?         @map("signed_ip")
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+  @@map("contract_signatories")
+}
+
+model ContractPaymentSchedule {
+  id            String         @id @default(uuid())
+  contractId    String         @map("contract_id")
+  installmentNo Int            @map("installment_no")
+  description   String?
+  dueDate       DateTime?      @map("due_date")
+  percent       Float?
+  amount        Decimal        @default(0) @db.Decimal(18, 2)
+  status        ScheduleStatus @default(pending)
+  paidAmount    Decimal        @default(0) @map("paid_amount") @db.Decimal(18, 2)
+  paidDate      DateTime?      @map("paid_date")
+  invoiceId     String?        @map("invoice_id") // link hóa đơn AR/AP
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+  @@index([dueDate, status])
+  @@map("contract_payment_schedules")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SUB-SYSTEM: HR — QUẢN TRỊ NHÂN SỰ (Giai đoạn 1: tổ chức + hồ sơ nhân viên)
+// Employee là thực thể GỐC (tách khỏi User/tài khoản). Ký HĐ/đủ điều kiện mới cấp
+// tài khoản User theo vị trí (Employee.userId). Xem docs/quan-ly-nhan-su.md.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum EmployeeStatus {
+  probation // thử việc
+  active // chính thức
+  on_leave // tạm nghỉ
+  resigned // đã nghỉ
+  terminated // chấm dứt HĐ
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  code        String?
+  parentId    String?  @map("parent_id") // phòng ban cha (cây)
+  managerId   String?  @map("manager_id") // Employee phụ trách (soft ref)
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  company  Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  parent   Department?  @relation("DeptParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children Department[] @relation("DeptParent")
+
+  positions Position[]
+  employees Employee[]
+
+  @@index([companyId])
+  @@map("departments")
+}
+
+model Position {
+  id            String   @id @default(uuid())
+  companyId     String   @map("company_id")
+  departmentId  String?  @map("department_id")
+  title         String
+  code          String?
+  description   String?  @db.Text // mô tả công việc (JD)
+  defaultRoleId String?  @map("default_role_id") // role mặc định khi cấp tài khoản (soft ref Role)
+  level         String? // board|c_suite|manager|staff
+  headcount     Int? // định biên
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  company    Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  department Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  employees  Employee[]
+  candidates Candidate[]
+
+  @@index([companyId])
+  @@map("positions")
+}
+
+model Employee {
+  id           String         @id @default(uuid())
+  companyId    String         @map("company_id")
+  employeeCode String         @map("employee_code")
+  fullName     String         @map("full_name")
+  email        String?
+  phone        String?
+  gender       Gender?
+  dob          DateTime?
+  address      String?
+  departmentId String?        @map("department_id")
+  positionId   String?        @map("position_id")
+  managerId    String?        @map("manager_id") // Employee cấp trên (self-rel)
+  userId       String?        @unique @map("user_id") // tài khoản hệ thống (0..1)
+  status       EmployeeStatus @default(probation)
+  hireDate     DateTime?      @map("hire_date")
+  resignDate   DateTime?      @map("resign_date")
+  note         String?
+
+  // Lương & đãi ngộ (cho tính lương)
+  baseSalary      Decimal  @default(0) @db.Decimal(18, 2) @map("base_salary") // lương cơ bản (gross/tháng)
+  allowance       Decimal  @default(0) @db.Decimal(18, 2) // phụ cấp
+  dependents      Int      @default(0) // số người phụ thuộc (giảm trừ thuế)
+  insuranceSalary Decimal? @db.Decimal(18, 2) @map("insurance_salary") // lương đóng BH (mặc định = baseSalary)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  department   Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  position     Position?     @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  manager      Employee?     @relation("EmpManager", fields: [managerId], references: [id], onDelete: SetNull)
+  reports      Employee[]    @relation("EmpManager")
+  user         User?         @relation("EmployeeUser", fields: [userId], references: [id], onDelete: SetNull)
+  contracts    Contract[] // hợp đồng lao động (module Hợp Đồng, type=labor)
+  payrollItems PayrollItem[]
+  candidate    Candidate?    @relation("CandidateEmployee")
+
+  @@unique([companyId, employeeCode])
+  @@index([companyId, status])
+  @@map("employees")
+}
+
+// ─── Tuyển dụng (Recruitment) ──────────────────────────────────────────────────
+
+enum CandidateStatus {
+  applied // đã ứng tuyển
+  screening // sàng lọc
+  interview // phỏng vấn
+  offer // đã gửi offer
+  hired // đã tuyển (→ tạo Employee)
+  rejected // từ chối
+}
+
+model Candidate {
+  id             String          @id @default(uuid())
+  companyId      String          @map("company_id")
+  fullName       String          @map("full_name")
+  email          String?
+  phone          String?
+  positionId     String?         @map("position_id")
+  departmentId   String?         @map("department_id")
+  source         String? // nguồn: web, giới thiệu, ...
+  expectedSalary Decimal?        @map("expected_salary") @db.Decimal(18, 2)
+  status         CandidateStatus @default(applied)
+  note           String?
+  employeeId     String?         @unique @map("employee_id") // khi tuyển → link Employee
+  appliedAt      DateTime        @default(now()) @map("applied_at")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  position Position?  @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  employee Employee? @relation("CandidateEmployee", fields: [employeeId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+  @@map("candidates")
+}
+
+// ─── Tính lương (Payroll) ──────────────────────────────────────────────────────
+
+enum PayrollStatus {
+  draft // bảng nháp (chưa chốt)
+  approved // đã duyệt
+  paid // đã chi
+}
+
+model PayrollPeriod {
+  id        String        @id @default(uuid())
+  companyId String        @map("company_id")
+  month     String // YYYY-MM
+  status    PayrollStatus @default(draft)
+  note      String?
+  paidDate  DateTime?     @map("paid_date")
+  createdBy String        @map("created_by")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  company Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  items   PayrollItem[]
+
+  @@unique([companyId, month])
+  @@map("payroll_periods")
+}
+
+model PayrollItem {
+  id                String  @id @default(uuid())
+  periodId          String  @map("period_id")
+  employeeId        String  @map("employee_id")
+  baseSalary        Decimal @default(0) @map("base_salary") @db.Decimal(18, 2)
+  allowance         Decimal @default(0) @db.Decimal(18, 2)
+  otherDeduction    Decimal @default(0) @map("other_deduction") @db.Decimal(18, 2)
+  grossSalary       Decimal @default(0) @map("gross_salary") @db.Decimal(18, 2)
+  insuranceBase     Decimal @default(0) @map("insurance_base") @db.Decimal(18, 2)
+  insuranceEmployee Decimal @default(0) @map("insurance_employee") @db.Decimal(18, 2) // BHXH/BHYT/BHTN NV đóng (10.5%)
+  insuranceEmployer Decimal @default(0) @map("insurance_employer") @db.Decimal(18, 2) // DN đóng (21.5%)
+  dependents        Int     @default(0)
+  taxableIncome     Decimal @default(0) @map("taxable_income") @db.Decimal(18, 2)
+  pit               Decimal @default(0) @db.Decimal(18, 2) // thuế TNCN
+  netSalary         Decimal @default(0) @map("net_salary") @db.Decimal(18, 2) // thực nhận
+  companyCost       Decimal @default(0) @map("company_cost") @db.Decimal(18, 2) // chi phí DN = gross + BH DN
+  note              String?
+
+  period   PayrollPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  employee Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([periodId, employeeId])
+  @@index([employeeId])
+  @@map("payroll_items")
+}
+
+// ─── Đối tác (Khách hàng & Nhà cung cấp) ───────────────────────────────────────
+
+enum PartnerKind {
+  customer // khách hàng (đầu ra / AR)
+  vendor // nhà cung cấp (đầu vào / AP)
+  both // vừa mua vừa bán
+}
+
+model Partner {
+  id              String      @id @default(uuid())
+  companyId       String      @map("company_id")
+  kind            PartnerKind @default(customer)
+  code            String?
+  name            String
+  taxCode         String?     @map("tax_code")
+  address         String?
+  phone           String?
+  email           String?
+  contactPerson   String?     @map("contact_person")
+  contactPhone    String?     @map("contact_phone")
+  creditLimit     Decimal?    @map("credit_limit") @db.Decimal(18, 2) // KH: hạn mức công nợ
+  paymentTermDays Int?        @map("payment_term_days") // kỳ hạn thanh toán (NET days)
+  note            String?
+  isActive        Boolean     @default(true) @map("is_active")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  company              Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  debts                Debt[]
+  cashTransactions     CashTransaction[]
+  assets               Asset[]
+  capitalContributions CapitalContribution[]
+  salesOrders          SalesOrder[]
+  interactions         CustomerInteraction[]
+  stockMovements       StockMovement[]
+  expenses             Expense[]
+
+  @@index([companyId, kind])
+  @@map("partners")
+}
+
+// ─── Công nợ (AR/AP) ───────────────────────────────────────────────────────────
+
+enum DebtKind {
+  receivable // phải thu (khách hàng)
+  payable // phải trả (nhà cung cấp)
+}
+
+enum DebtStatus {
+  open // chưa thu/trả
+  partial // thu/trả một phần
+  paid // đã tất toán
+}
+
+model Debt {
+  id          String     @id @default(uuid())
+  companyId   String     @map("company_id")
+  kind        DebtKind
+  partnerId   String?    @map("partner_id")
+  contractId  String?    @map("contract_id")
+  description String
+  amount      Decimal    @default(0) @db.Decimal(18, 2)
+  paidAmount  Decimal    @default(0) @map("paid_amount") @db.Decimal(18, 2)
+  issueDate   DateTime?  @map("issue_date")
+  dueDate     DateTime?  @map("due_date")
+  status      DebtStatus @default(open)
+  note        String?
+  createdBy   String     @map("created_by")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  partner  Partner?  @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+  contract Contract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, kind, status])
+  @@index([dueDate])
+  @@map("debts")
+}
+
+// ─── Ngân quỹ (Cash — sổ quỹ tiền mặt & ngân hàng) ─────────────────────────────
+
+enum CashAccountType {
+  cash // tiền mặt
+  bank // tài khoản ngân hàng
+}
+
+enum CashTxKind {
+  receipt // phiếu thu (tiền vào)
+  payment // phiếu chi (tiền ra)
+}
+
+model CashAccount {
+  id             String          @id @default(uuid())
+  companyId      String          @map("company_id")
+  name           String
+  type           CashAccountType @default(cash)
+  bankName       String?         @map("bank_name")
+  accountNo      String?         @map("account_no")
+  openingBalance Decimal         @default(0) @map("opening_balance") @db.Decimal(18, 2)
+  isActive       Boolean         @default(true) @map("is_active")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  company      Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  transactions CashTransaction[]
+
+  @@index([companyId])
+  @@map("cash_accounts")
+}
+
+model CashTransaction {
+  id          String     @id @default(uuid())
+  companyId   String     @map("company_id")
+  accountId   String     @map("account_id")
+  kind        CashTxKind
+  amount      Decimal    @default(0) @db.Decimal(18, 2)
+  date        DateTime   @default(now())
+  category    String? // nhóm thu/chi (lương, mua hàng, bán hàng...)
+  description String
+  partnerId   String?    @map("partner_id")
+  createdBy   String     @map("created_by")
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  company Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  account CashAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  partner Partner?    @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, accountId, date])
+  @@map("cash_transactions")
+}
+
+// ─── Tài sản cố định & Góp vốn ─────────────────────────────────────────────────
+
+enum AssetStatus {
+  active // đang dùng
+  disposed // đã thanh lý
+}
+
+enum DepreciationMethod {
+  straight_line // khấu hao đường thẳng
+}
+
+enum CapitalKind {
+  cash // tiền mặt
+  asset // tài sản
+  land_use_right // quyền sử dụng đất
+  ip_right // quyền sở hữu trí tuệ
+  other // tài sản khác
+}
+
+enum CapitalStatus {
+  proposed // đề xuất
+  valued // đã định giá
+  recorded // đã ghi tăng vốn
+}
+
+model Asset {
+  id               String             @id @default(uuid())
+  companyId        String             @map("company_id")
+  code             String?
+  name             String
+  category         String?
+  acquisitionDate  DateTime?          @map("acquisition_date")
+  cost             Decimal            @default(0) @db.Decimal(18, 2) // nguyên giá
+  salvageValue     Decimal            @default(0) @map("salvage_value") @db.Decimal(18, 2) // giá trị thu hồi ước tính
+  usefulLifeMonths Int?               @map("useful_life_months") // thời gian sử dụng (tháng)
+  method           DepreciationMethod @default(straight_line)
+  status           AssetStatus        @default(active)
+  partnerId        String?            @map("partner_id") // nhà cung cấp
+  note             String?
+  createdBy        String             @map("created_by")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  partner Partner? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+  @@map("assets")
+}
+
+model CapitalContribution {
+  id              String        @id @default(uuid())
+  companyId       String        @map("company_id")
+  contributorName String        @map("contributor_name")
+  partnerId       String?       @map("partner_id")
+  kind            CapitalKind   @default(cash)
+  description     String?
+  value           Decimal       @default(0) @db.Decimal(18, 2)
+  valuationMethod String?       @map("valuation_method") // phương pháp định giá (cho tài sản/QSDĐ/SHTT)
+  contributedDate DateTime?     @map("contributed_date")
+  status          CapitalStatus @default(proposed)
+  note            String?
+  createdBy       String        @map("created_by")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  partner Partner? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, kind])
+  @@map("capital_contributions")
+}
+
+// ─── Bán hàng (đơn hàng) & Chăm sóc khách hàng (CSKH) ──────────────────────────
+
+enum SalesOrderStatus {
+  draft // nháp
+  confirmed // đã xác nhận
+  delivered // đã giao
+  invoiced // đã xuất hóa đơn
+  cancelled // hủy
+}
+
+enum InteractionType {
+  call // gọi điện
+  email // email
+  meeting // gặp mặt
+  note // ghi chú
+  ticket // yêu cầu hỗ trợ
+}
+
+enum InteractionStatus {
+  open // đang xử lý
+  done // đã xong
+}
+
+model SalesOrder {
+  id         String           @id @default(uuid())
+  companyId  String           @map("company_id")
+  code       String
+  customerId String?          @map("customer_id")
+  orderDate  DateTime?        @map("order_date")
+  status     SalesOrderStatus @default(draft)
+  note       String?
+  total      Decimal          @default(0) @db.Decimal(18, 2)
+  createdBy  String           @map("created_by")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+
+  company  Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer Partner?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  lines    SalesOrderLine[]
+
+  @@unique([companyId, code])
+  @@index([companyId, status])
+  @@map("sales_orders")
+}
+
+model SalesOrderLine {
+  id        String  @id @default(uuid())
+  orderId   String  @map("order_id")
+  productId String? @map("product_id") // FK mềm tới Product (tự động trừ tồn kho khi giao)
+  itemName  String  @map("item_name")
+  quantity  Decimal @default(1) @db.Decimal(18, 2)
+  unitPrice Decimal @default(0) @map("unit_price") @db.Decimal(18, 2)
+  amount    Decimal @default(0) @db.Decimal(18, 2)
+
+  order   SalesOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product?   @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@map("sales_order_lines")
+}
+
+model CustomerInteraction {
+  id        String            @id @default(uuid())
+  companyId String            @map("company_id")
+  partnerId String?           @map("partner_id")
+  type      InteractionType   @default(note)
+  subject   String
+  content   String?
+  status    InteractionStatus @default(open)
+  date      DateTime          @default(now())
+  createdBy String            @map("created_by")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  partner Partner? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+  @@map("customer_interactions")
+}
+
+// ─── Hàng tồn kho (Inventory) ──────────────────────────────────────────────────
+
+enum StockMoveKind {
+  in // nhập kho
+  out // xuất kho
+  adjust // điều chỉnh (kiểm kê) — quantity có thể âm
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  sku       String?
+  name      String
+  unit      String   @default("cái") // đơn vị tính
+  category  String?
+  costPrice Decimal  @default(0) @map("cost_price") @db.Decimal(18, 2) // giá vốn
+  salePrice Decimal  @default(0) @map("sale_price") @db.Decimal(18, 2) // giá bán
+  note      String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  movements StockMovement[]
+  orderLines SalesOrderLine[]
+
+  @@unique([companyId, sku])
+  @@index([companyId])
+  @@map("products")
+}
+
+model StockMovement {
+  id        String        @id @default(uuid())
+  companyId String        @map("company_id")
+  productId String        @map("product_id")
+  kind      StockMoveKind
+  quantity  Decimal       @default(0) @db.Decimal(18, 2)
+  unitCost  Decimal?      @map("unit_cost") @db.Decimal(18, 2)
+  date      DateTime      @default(now())
+  reference String? // số phiếu / chứng từ
+  partnerId String?       @map("partner_id")
+  note      String?
+  createdBy String        @map("created_by")
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  product Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  partner Partner? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, productId, date])
+  @@map("stock_movements")
+}
+
+// ─── Chi phí (Expense) — theo dõi hóa đơn & kê khai thuế ───────────────────────
+
+model Expense {
+  id          String    @id @default(uuid())
+  companyId   String    @map("company_id")
+  date        DateTime  @default(now())
+  category    String?
+  description String
+  amount      Decimal   @default(0) @db.Decimal(18, 2) // giá trị chưa thuế
+  vatRate     Float     @default(0) @map("vat_rate") // % thuế GTGT (0/5/8/10)
+  vatAmount   Decimal   @default(0) @map("vat_amount") @db.Decimal(18, 2)
+  total       Decimal   @default(0) @db.Decimal(18, 2) // tổng đã gồm thuế
+  hasInvoice  Boolean   @default(false) @map("has_invoice") // đã có hóa đơn?
+  invoiceNo   String?   @map("invoice_no")
+  invoiceDate DateTime? @map("invoice_date")
+  taxDeclared Boolean   @default(false) @map("tax_declared") // đã kê khai thuế?
+  taxPeriod   String?   @map("tax_period") // kỳ kê khai (YYYY-MM / YYYY-Qx)
+  partnerId   String?   @map("partner_id") // nhà cung cấp
+  note        String?
+  createdBy   String    @map("created_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  partner Partner? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, taxDeclared])
+  @@index([companyId, hasInvoice])
+  @@map("expenses")
+}
+
+// ─── Thuế (Tax) — kê khai GTGT / TNDN / TNCN + tự tính ─────────────────────────
+
+enum TaxType {
+  vat // GTGT
+  cit // TNDN
+  pit // TNCN
+}
+
+enum TaxReturnStatus {
+  draft // nháp (đã tính)
+  filed // đã nộp tờ khai
+  paid // đã nộp tiền
+}
+
+// Cấu hình thuế theo công ty: loại hình DN, ngành nghề, phương pháp & thuế suất, ưu đãi.
+model TaxSetting {
+  id              String   @id @default(uuid())
+  companyId       String   @unique @map("company_id")
+  businessType    String?  @map("business_type") // TNHH / CP / DNTN / HKD...
+  industry        String? // ngành nghề chính
+  vatMethod       String   @default("deduction") @map("vat_method") // deduction (khấu trừ) | direct (trực tiếp)
+  vatDirectRate   Float    @default(0) @map("vat_direct_rate") // % trên doanh thu (PP trực tiếp, theo ngành)
+  citRate         Float    @default(20) @map("cit_rate") // thuế suất TNDN chuẩn (%)
+  citIncentiveRate      Float?   @map("cit_incentive_rate")       // thuế suất ưu đãi (nếu có)
+  incentiveNote         String?  @map("incentive_note")            // căn cứ ưu đãi ngành nghề
+  incentiveStartDate    DateTime? @map("incentive_start_date")     // ngày bắt đầu kỳ ưu đãi
+  incentiveYearsExempt  Int      @default(0) @map("incentive_years_exempt")  // số năm miễn (thuế suất 0%)
+  incentiveYearsReduced Int      @default(0) @map("incentive_years_reduced") // số năm giảm 50% tiếp theo
+  lossCarryforward      Decimal  @default(0) @map("loss_carryforward") @db.Decimal(18, 2) // lỗ kết chuyển (kết chuyển tối đa 5 năm liên tiếp)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("tax_settings")
+}
+
+model TaxReturn {
+  id            String          @id @default(uuid())
+  companyId     String          @map("company_id")
+  type          TaxType
+  period        String // YYYY-MM hoặc YYYY-Qn
+  revenue       Decimal         @default(0) @db.Decimal(18, 2)
+  deductible    Decimal         @default(0) @db.Decimal(18, 2)
+  outputTax     Decimal         @default(0) @map("output_tax") @db.Decimal(18, 2) // GTGT đầu ra
+  inputTax      Decimal         @default(0) @map("input_tax") @db.Decimal(18, 2) // GTGT đầu vào
+  taxableIncome Decimal         @default(0) @map("taxable_income") @db.Decimal(18, 2)
+  rate          Float           @default(0) // thuế suất áp dụng (%)
+  payable       Decimal         @default(0) @db.Decimal(18, 2) // thuế phải nộp
+  dueDate       DateTime?       @map("due_date")
+  status        TaxReturnStatus @default(draft)
+  filedDate     DateTime?       @map("filed_date")
+  note          String?
+  detail        Json? // chi tiết tính toán (audit)
+  createdBy     String          @map("created_by")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, type, period])
+  @@index([companyId, dueDate])
+  @@map("tax_returns")
+}

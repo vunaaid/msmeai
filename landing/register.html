@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dùng thử miễn phí — vSME</title>
+  <meta name="description" content="Đăng ký dùng thử vSME miễn phí 30 ngày, không cần thẻ tín dụng" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Tahoma', 'Verdana', 'Geneva', 'sans-serif'],
+            sans: ['Tahoma', 'Verdana', 'Geneva', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-white font-sans">
+
+  <!-- NAV -->
+  <nav class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <span class="text-xl font-serif font-black text-gray-900">vSME</span>
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="about.html" class="text-gray-600 text-sm font-medium hover:text-cyan-600 transition-colors">Về chúng tôi</a>
+          <a href="services.html" class="text-gray-600 text-sm font-medium hover:text-cyan-600 transition-colors">Tính năng</a>
+          <a href="pricing.html" class="text-gray-600 text-sm font-medium hover:text-cyan-600 transition-colors">Bảng giá</a>
+          <a href="contact.html" class="text-gray-600 text-sm font-medium hover:text-cyan-600 transition-colors">Liên hệ</a>
+        </div>
+        <div class="flex items-center space-x-3">
+          <a href="login.html" class="text-sm font-medium text-gray-600 hover:text-cyan-600 transition-colors">Đăng nhập</a>
+          <a href="register.html" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">Dùng thử miễn phí</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl w-full space-y-8">
+
+      <!-- Header -->
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 bg-cyan-100 rounded-full flex items-center justify-center mb-6">
+          <svg class="h-8 w-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+          </svg>
+        </div>
+        <h2 class="text-3xl font-serif font-black text-gray-900">Tạo tài khoản miễn phí</h2>
+        <p class="mt-2 text-gray-600 text-sm">Tham gia cùng 500+ doanh nghiệp SME đang dùng vSME</p>
+      </div>
+
+      <!-- Perks banner -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-cyan-50 rounded-xl p-3 text-center">
+          <div class="text-lg font-serif font-black text-cyan-600">30 ngày</div>
+          <div class="text-xs text-gray-500 mt-0.5">Dùng thử miễn phí</div>
+        </div>
+        <div class="bg-amber-50 rounded-xl p-3 text-center">
+          <div class="text-lg font-serif font-black text-amber-600">Không</div>
+          <div class="text-xs text-gray-500 mt-0.5">Cần thẻ tín dụng</div>
+        </div>
+        <div class="bg-cyan-50 rounded-xl p-3 text-center">
+          <div class="text-lg font-serif font-black text-cyan-600">Hủy</div>
+          <div class="text-xs text-gray-500 mt-0.5">Bất cứ lúc nào</div>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="px-8 pt-8 pb-4 border-b border-gray-50 text-center">
+          <h3 class="text-2xl font-serif font-bold text-gray-900">Bắt đầu ngay</h3>
+          <p class="text-sm text-gray-500 mt-1">Điền thông tin để tạo tài khoản dùng thử</p>
+        </div>
+        <div class="px-8 py-8">
+          <form id="register-form" onsubmit="handleRegister(event)" class="space-y-5">
+
+            <!-- Name row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="block text-sm font-medium text-gray-700">Họ</label>
+                <input type="text" required placeholder="Nguyễn" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-sm font-medium text-gray-700">Tên</label>
+                <input type="text" required placeholder="Văn An" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+              </div>
+            </div>
+
+            <!-- Company -->
+            <div class="space-y-1.5">
+              <label class="block text-sm font-medium text-gray-700">Tên công ty <span class="text-red-500">*</span></label>
+              <input type="text" required placeholder="Công ty TNHH Thương mại ABC" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+            </div>
+
+            <!-- Email -->
+            <div class="space-y-1.5">
+              <label class="block text-sm font-medium text-gray-700">Email công ty <span class="text-red-500">*</span></label>
+              <input type="email" required placeholder="ban@congty.com" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+            </div>
+
+            <!-- Phone -->
+            <div class="space-y-1.5">
+              <label class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+              <input type="tel" placeholder="0912 345 678" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+            </div>
+
+            <!-- Company size -->
+            <div class="space-y-1.5">
+              <label class="block text-sm font-medium text-gray-700">Quy mô doanh nghiệp</label>
+              <select class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all bg-white appearance-none">
+                <option value="">-- Chọn quy mô --</option>
+                <option value="1-10">1–10 nhân viên</option>
+                <option value="11-50">11–50 nhân viên</option>
+                <option value="51-200">51–200 nhân viên</option>
+                <option value="200+">Trên 200 nhân viên</option>
+              </select>
+            </div>
+
+            <!-- Password row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="block text-sm font-medium text-gray-700">Mật khẩu <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <input id="pw1" type="password" required placeholder="Tạo mật khẩu" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+                  <button type="button" onclick="togglePassword('pw1', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-sm font-medium text-gray-700">Xác nhận mật khẩu <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <input id="pw2" type="password" required placeholder="Nhập lại mật khẩu" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+                  <button type="button" onclick="togglePassword('pw2', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password strength hint -->
+            <p class="text-xs text-gray-400 -mt-3">Mật khẩu tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và số.</p>
+
+            <!-- Checkboxes -->
+            <div class="space-y-3 pt-1">
+              <label class="flex items-start space-x-3 cursor-pointer">
+                <input id="terms" type="checkbox" required class="mt-0.5 w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500" />
+                <span class="text-sm text-gray-600 leading-relaxed">
+                  Tôi đồng ý với <a href="#" class="text-cyan-600 hover:underline font-medium">Điều khoản dịch vụ</a> và <a href="#" class="text-cyan-600 hover:underline font-medium">Chính sách bảo mật</a> của vSME <span class="text-red-500">*</span>
+                </span>
+              </label>
+              <label class="flex items-start space-x-3 cursor-pointer">
+                <input type="checkbox" class="mt-0.5 w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500" />
+                <span class="text-sm text-gray-600 leading-relaxed">
+                  Tôi muốn nhận thông tin cập nhật sản phẩm và tips quản lý doanh nghiệp qua email
+                </span>
+              </label>
+            </div>
+
+            <!-- Error -->
+            <div id="error-msg" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3"></div>
+
+            <!-- Submit -->
+            <button
+              type="submit" id="submit-btn"
+              class="w-full flex items-center justify-center bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3.5 px-4 rounded-xl text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+            >
+              <span id="btn-text">Tạo tài khoản miễn phí</span>
+              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="mt-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-3 bg-white text-gray-400">Đã có tài khoản?</span>
+              </div>
+            </div>
+            <div class="mt-5">
+              <a href="login.html" class="w-full flex items-center justify-center border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-50 font-medium py-3 px-4 rounded-xl text-sm transition-colors">
+                Đăng nhập thay thế
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security note -->
+      <div class="text-center">
+        <p class="text-xs text-gray-400 flex items-center justify-center space-x-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Thông tin cá nhân được mã hóa và bảo mật. Chúng tôi tuân thủ Luật An ninh mạng Việt Nam.</span>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div>
+          <div class="flex items-center space-x-2 mb-4">
+            <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <span class="text-xl font-serif font-black text-cyan-400">vSME</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">Nền tảng quản lý doanh nghiệp SME tích hợp AI — Kế toán · Nhân sự · Bán hàng · Hóa đơn điện tử.</p>
+        </div>
+        <div>
+          <h4 class="text-base font-serif font-bold mb-5">Modules</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Kế Toán Tổng Hợp</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Hóa Đơn Điện Tử</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Nhân Sự & Lương</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Bán Hàng & CRM</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">AI Agent System</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-base font-serif font-bold mb-5">Công ty</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="about.html" class="hover:text-cyan-400 transition-colors">Về chúng tôi</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Blog & Tin tức</a></li>
+            <li><a href="contact.html" class="hover:text-cyan-400 transition-colors">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-base font-serif font-bold mb-5">Liên hệ</h4>
+          <div class="space-y-2 text-gray-400 text-sm">
+            <p>📧 hello@vsme.vn</p>
+            <p>📞 1800 6789 (Miễn phí)</p>
+            <p>📍 Tầng 12, Vietcombank Tower, Hà Nội</p>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
+        <p>© 2026 vSME. Bản quyền thuộc về vSME Technology JSC.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function togglePassword(fieldId, btn) {
+      const field = document.getElementById(fieldId);
+      const isText = field.type === 'text';
+      field.type = isText ? 'password' : 'text';
+      btn.innerHTML = isText
+        ? `<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`
+        : `<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>`;
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const btnText = document.getElementById('btn-text');
+      const errMsg = document.getElementById('error-msg');
+      errMsg.classList.add('hidden');
+      btn.disabled = true;
+      btnText.textContent = 'Đang tạo tài khoản...';
+      setTimeout(() => {
+        btn.classList.remove('bg-cyan-600','hover:bg-cyan-700');
+        btn.classList.add('bg-green-600');
+        btnText.textContent = '✓ Tạo tài khoản thành công! Kiểm tra email của bạn.';
+      }, 1200);
+    }
+  </script>
+</body>
+</html>

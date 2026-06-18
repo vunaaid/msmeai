@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    "paths": {
+      "@vsme/db/*": ["../../packages/db/src/*"],
+      "@vsme/audit/*": ["../../packages/audit/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

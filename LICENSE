@@ -1,0 +1,180 @@
+vSME Source-Available License (vSME-SAL) — Version 1.0
+
+Copyright (c) 2026 Vũ Nguyễn Anh  <vuna.aid@gmail.com>
+
+A Vietnamese reference translation is available in LICENSE.vi.md. This English
+text is the only legally binding version; in case of any discrepancy, it governs.
+
+This is a SOURCE-AVAILABLE license. It is NOT an Open Source license as
+defined by the Open Source Initiative, and the software is NOT free software.
+The source code is published so the community may read, learn from, use it
+within the limits below, and contribute improvements. By using, copying,
+modifying, or distributing the Software, You accept and agree to this License.
+
+-------------------------------------------------------------------------------
+1. DEFINITIONS
+-------------------------------------------------------------------------------
+
+"Software" means the vSME source code and any files in this repository, and any
+modified or derivative versions of them.
+
+"Licensor" means the copyright holder named above, together with its successors
+and assigns. The Licensor may assign this License and all rights under it
+(including the right to grant commercial licenses) to another person or legal
+entity — for example, to a company later formed by the copyright holder — and
+all rights granted to the Licensor herein run to the benefit of such assignee.
+
+"You" (or "Your") means the individual or organization exercising rights under
+this License, together with all entities that control, are controlled by, or are
+under common control with You ("Affiliates"). For all limits in this License, the
+acts and the Real Users of You and Your Affiliates are aggregated and counted
+together.
+
+"Real User" means a distinct natural person who is given credentials to access
+or operate the Software. The number of Real Users is the total count of distinct
+natural persons holding credentials at any given time, regardless of whether
+they are concurrent or active, aggregated across all copies, instances, and
+deployments operated by You and Your Affiliates. Automated agents, AI workers,
+bots, service accounts, cron jobs, and other non-human actors are NOT counted as
+Real Users.
+
+"Production Use" means any use of the Software other than for development,
+testing, evaluation, or personal experimentation.
+
+"Competing Use" means making the Software, or a modified or derivative version of
+it, available to any third party — whether or not for a fee — in a product or
+service that: (a) substitutes for the Software; (b) substitutes for any product
+or service the Licensor offers using the Software as of the date of Your use; or
+(c) offers the same or substantially similar functionality as the Software or as
+the Licensor's commercial offering.
+
+-------------------------------------------------------------------------------
+2. GRANT OF RIGHTS (FREE TIER)
+-------------------------------------------------------------------------------
+
+Subject to the terms below, the Licensor grants You a worldwide, royalty-free,
+non-exclusive, perpetual license to use, copy, modify, and self-host the
+Software in Production, AT NO CHARGE, provided that BOTH of the following are
+true at all times:
+
+  (a) SCALE LIMIT — the number of Real Users does not exceed FOUR (4); and
+
+  (b) NON-COMPETE — Your use is not a Competing Use.
+
+You may also copy, modify, and redistribute the source code for non-Production
+purposes (study, contribution, forking for development), subject to Section 3.
+
+-------------------------------------------------------------------------------
+3. REDISTRIBUTION AND NOTICES
+-------------------------------------------------------------------------------
+
+If You distribute the Software or any modified or derivative version of it:
+
+  (a) FLOW-DOWN — Every copy, modified version, and derivative work remains fully
+      subject to this License. You may not grant any recipient rights greater
+      than those You hold under this License, and any such recipient is bound by
+      this License.
+
+  (b) DISPLAY — You must conspicuously include a complete, unmodified copy of
+      this License with each copy, and retain all copyright, license, and
+      attribution notices contained in the Software.
+
+  (c) NO REMOVAL OR CIRCUMVENTION — You may not remove, disable, alter, or
+      obscure (i) any copyright, license, or attribution notice in the Software,
+      or (ii) the license notice that the Software displays (for example, on
+      startup or in its user interface). You may not misrepresent the terms of
+      this License.
+
+-------------------------------------------------------------------------------
+4. WHEN A COMMERCIAL LICENSE IS REQUIRED
+-------------------------------------------------------------------------------
+
+A separate commercial license from the Licensor is required if EITHER:
+
+  - the number of Real Users is FIVE (5) or more; or
+  - You wish to make any Competing Use, or any other use excluded by Section 2.
+
+To obtain a commercial license, contact: vuna.aid@gmail.com
+
+-------------------------------------------------------------------------------
+5. HONOR SYSTEM (NO TECHNICAL ENFORCEMENT)
+-------------------------------------------------------------------------------
+
+The Software contains no license keys, activation, usage metering, or
+enforcement of any kind, and will continue to function regardless of the number
+of Real Users. Compliance with the limits in this License is based on Your good
+faith and honesty. The absence of technical enforcement does NOT waive any of
+the Licensor's rights: exceeding the free tier, or making a Competing Use,
+without a commercial license is a breach of this License.
+
+-------------------------------------------------------------------------------
+6. PATENT LICENSE AND PATENT TERMINATION
+-------------------------------------------------------------------------------
+
+Subject to Your compliance with this License, the Licensor grants You a
+worldwide, royalty-free, non-exclusive license, under patent claims the Licensor
+can license that are necessarily infringed by the Software, to make and use the
+Software for the purposes permitted in this License. If You or Your Affiliate
+initiate or assert a claim (including a cross-claim or counterclaim) alleging
+that the Software infringes or contributes to the infringement of any patent,
+then all licenses granted to You under this License terminate immediately.
+
+-------------------------------------------------------------------------------
+7. CONTRIBUTIONS
+-------------------------------------------------------------------------------
+
+Contributions to this project are governed by the Contributor License Agreement
+(see CLA.md). By submitting a contribution You agree to its terms, which include
+granting the Licensor the right to re-license Your contribution, including under
+the Licensor's commercial license.
+
+-------------------------------------------------------------------------------
+8. NO PERPETUAL OPEN-SOURCE CONVERSION
+-------------------------------------------------------------------------------
+
+This License has no change date. The Software does not automatically convert to
+an open source license at any time. Each released version remains under this
+License unless the Licensor explicitly relicenses it.
+
+-------------------------------------------------------------------------------
+9. TRADEMARKS
+-------------------------------------------------------------------------------
+
+This License does not grant permission to use the trade names, trademarks,
+service marks, logos, or product names of the Licensor or its Affiliates, except
+as required for reasonable and customary use in describing the origin of the
+Software.
+
+-------------------------------------------------------------------------------
+10. DISCLAIMER OF WARRANTY AND LIMITATION OF LIABILITY
+-------------------------------------------------------------------------------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE LICENSOR BE
+LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+11. TERMINATION
+-------------------------------------------------------------------------------
+
+Any use in breach of this License automatically terminates Your rights under it
+for all versions of the Software. If You cease all breach within thirty (30)
+days of becoming aware of it, and the breach is Your first, Your rights are
+reinstated. Otherwise You must cease Production Use unless and until You obtain a
+commercial license. Sections 5, 9, 10, and 12 survive termination.
+
+-------------------------------------------------------------------------------
+12. GOVERNING LAW AND DISPUTE RESOLUTION
+-------------------------------------------------------------------------------
+
+This License is governed by and construed in accordance with the laws of the
+Socialist Republic of Vietnam, without regard to its conflict-of-laws rules. Any
+dispute arising out of or in connection with this License shall be submitted to
+the competent courts of Vietnam, unless the parties agree otherwise in writing.
+If any provision of this License is held invalid or unenforceable, the remaining
+provisions shall remain in full force and effect.
+
+END OF TERMS

@@ -1,0 +1,18 @@
+{
+  "name": "@vsme/audit",
+  "version": "0.1.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./middleware": "./src/prisma-middleware.ts",
+    "./event-bus": "./src/event-bus.ts"
+  },
+  "dependencies": {
+    "@vsme/db": "workspace:*",
+    "bullmq": "^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

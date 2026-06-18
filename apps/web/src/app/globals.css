@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+/* ─── Custom Theme (Tailwind v4 @theme) ─────────────────────────────────── */
+@theme {
+  /* vSME Brand Colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-900: #1e3a8a;
+
+  /* Sidebar */
+  --color-sidebar-bg: #0f172a;
+  --color-sidebar-hover: #1e293b;
+  --color-sidebar-active: #1e3a8a;
+  --color-sidebar-text: #94a3b8;
+  --color-sidebar-text-active: #f1f5f9;
+
+  /* Fonts — Tahoma system font for entire project */
+  --font-family-sans: Tahoma, Verdana, Geneva, sans-serif;
+  --font-family-serif: Tahoma, Verdana, Geneva, sans-serif;
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.2s ease-in-out;
+  --animate-slide-in: slideIn 0.2s ease-out;
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes slideIn {
+    0% { transform: translateX(-10px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+}
+
+/* ─── CSS Variables ──────────────────────────────────────────────────────── */
+:root {
+  --sidebar-width: 240px;
+  --header-height: 56px;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; } /* slate-700 */
+::-webkit-scrollbar-thumb:hover { background: #475569; } /* slate-600 */
+
+/* ─── Transitions ────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  transition-property: color, background-color, border-color, opacity, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Exclude transitions from elements where they cause layout jank */
+[class*="animate-"] { transition: none !important; }

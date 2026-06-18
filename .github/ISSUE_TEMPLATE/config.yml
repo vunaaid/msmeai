@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Báo cáo lỗ hổng bảo mật / Security
+    url: https://github.com/vunaaid/msmeai/security/advisories/new
+    about: KHÔNG mở issue công khai cho lỗ hổng — báo cáo riêng tư tại đây (xem SECURITY.md).
+  - name: 💼 Mua license thương mại / Commercial license
+    url: mailto:vuna.aid@gmail.com
+    about: Tổ chức ≥ 5 người dùng thật hoặc dùng cạnh tranh — liên hệ mua license.
+  - name: 💬 Thảo luận / Discussions
+    url: https://github.com/vunaaid/msmeai/discussions
+    about: Câu hỏi, ý tưởng, trao đổi chung.

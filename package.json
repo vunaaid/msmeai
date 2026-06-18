@@ -1,0 +1,38 @@
+{
+  "name": "vsme",
+  "private": true,
+  "version": "1.0.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "description": "vSME — Nền tảng quản lý công ty SME tích hợp AI",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "db:check": "bash scripts/check-db.sh",
+    "db:check:fix": "bash scripts/check-db.sh --fix",
+    "db:push": "pnpm --filter @vsme/db db:push",
+    "db:migrate": "pnpm --filter @vsme/db db:migrate",
+    "db:generate": "pnpm --filter @vsme/db db:generate",
+    "db:seed": "pnpm --filter @vsme/db db:seed",
+    "db:studio": "pnpm --filter @vsme/db db:studio",
+    "deploy": "pnpm db:check && pnpm type-check && pnpm --filter @vsme/web build && pm2 restart ecosystem.config.js --update-env"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0"
+  },
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.0.0",
+      "react-dom": "19.0.0"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@vsme/ai-sdk",
+  "version": "0.1.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vsme/llm": "workspace:*",
+    "@vsme/db": "workspace:*",
+    "@vsme/storage": "workspace:*",
+    "zod": "^3.23.0",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}

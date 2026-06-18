@@ -1,0 +1,52 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@vsme/db": [
+        "../../packages/db/src/index.ts"
+      ],
+      "@vsme/db/*": [
+        "../../packages/db/src/*"
+      ],
+      "@vsme/modules": [
+        "../../packages/modules/src/index.ts"
+      ],
+      "@vsme/modules/*": [
+        "../../packages/modules/src/*"
+      ],
+      "@vsme/audit": [
+        "../../packages/audit/src/index.ts"
+      ],
+      "@vsme/audit/*": [
+        "../../packages/audit/src/*"
+      ]
+    },
+    "noEmit": true,
+    "incremental": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

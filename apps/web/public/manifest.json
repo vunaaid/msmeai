@@ -1,0 +1,25 @@
+{
+  "name": "vSME — Quản Trị Doanh Nghiệp",
+  "short_name": "vSME",
+  "description": "Phần mềm quản trị doanh nghiệp vừa và nhỏ tích hợp AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "vi"
+}
