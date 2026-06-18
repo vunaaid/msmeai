@@ -35,8 +35,7 @@ vSME/
 │   ├── db/           # Prisma schema + client
 │   ├── modules/      # Module Registry
 │   └── audit/        # Audit Log + Event Bus
-├── docker/           # Docker Compose
-└── docs/             # Tài liệu thiết kế
+└── docker/           # Docker Compose
 ```
 
 ---
