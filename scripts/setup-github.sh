@@ -23,9 +23,8 @@ gh api -X PATCH "repos/$SLUG" \
 echo "  ✓ description, squash-only, delete-branch-on-merge, discussions on, wiki off"
 
 echo "▶ 2/5 — Topics"
-gh api -X PUT "repos/$SLUG/topics" -H "Accept: application/vnd.github+json" \
-  -f names[]=erp -f names[]=sme -f names[]=msme -f names[]=ai-agents -f names[]=vietnam \
-  -f names[]=accounting -f names[]=nextjs -f names[]=prisma -f names[]=source-available >/dev/null
+echo '{"names":["erp","sme","msme","ai-agents","vietnam","accounting","nextjs","prisma","source-available"]}' \
+  | gh api -X PUT "repos/$SLUG/topics" -H "Accept: application/vnd.github+json" --input - >/dev/null
 echo "  ✓ topics"
 
 echo "▶ 3/5 — Branch protection cho main"

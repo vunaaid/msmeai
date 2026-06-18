@@ -30,7 +30,8 @@ jobs:
         with:
           path-to-signatures: 'signatures/cla.json'
           path-to-document: 'https://github.com/vunaaid/msmeai/blob/main/CLA.md'
-          branch: 'main'
+          # Lưu chữ ký vào branch riêng (KHÔNG phải main — main được bảo vệ).
+          branch: 'cla-signatures'
           custom-pr-sign-comment: 'I have read the CLA Document and I hereby sign the CLA'
           custom-notsigned-prcomment: 'Cảm ơn PR của bạn! Vui lòng đọc [CLA](CLA.md) và comment đúng câu dưới đây để ký (một lần duy nhất).'
           allowlist: 'vunaaid,dependabot[bot]'
