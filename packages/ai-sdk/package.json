@@ -13,7 +13,7 @@
     "@vsme/llm": "workspace:*",
     "@vsme/db": "workspace:*",
     "@vsme/storage": "workspace:*",
-    "zod": "^3.23.0",
+    "zod": "^4.4.3",
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {
