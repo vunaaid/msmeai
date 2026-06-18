@@ -20,7 +20,7 @@
     "db:migrate:dev:DANGER": "prisma migrate dev"
   },
   "dependencies": {
-    "@prisma/client": "^6.0.0",
+    "@prisma/client": "^7.8.0",
     "@prisma/extension-accelerate": "*",
     "bcryptjs": "^2.4.3"
   },
