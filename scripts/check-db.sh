@@ -13,12 +13,17 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DB_DIR="$ROOT/packages/db"
 SCHEMA="$DB_DIR/prisma/schema.prisma"
 
-# Load DATABASE_URL from root .env (strip quotes; keep query string for prisma).
-if [[ -f "$ROOT/.env" ]]; then
-  export DATABASE_URL="$(grep -E '^DATABASE_URL=' "$ROOT/.env" | head -1 | sed 's/^DATABASE_URL=//; s/^"//; s/"$//')"
+# Load DATABASE_URL from the env file (strip quotes; keep query string for prisma).
+# Secrets live in secrets/.env (gitignored); fall back to legacy root .env.
+ENV_FILE=""
+for f in "$ROOT/secrets/.env" "$ROOT/.env"; do
+  [[ -f "$f" ]] && { ENV_FILE="$f"; break; }
+done
+if [[ -z "${DATABASE_URL:-}" && -n "$ENV_FILE" ]]; then
+  export DATABASE_URL="$(grep -E '^DATABASE_URL=' "$ENV_FILE" | head -1 | sed 's/^DATABASE_URL=//; s/^"//; s/"$//')"
 fi
 if [[ -z "${DATABASE_URL:-}" ]]; then
-  echo "❌ DATABASE_URL not set (looked in $ROOT/.env)"; exit 1
+  echo "❌ DATABASE_URL not set (looked in $ROOT/secrets/.env and $ROOT/.env)"; exit 1
 fi
 
 cd "$DB_DIR"
