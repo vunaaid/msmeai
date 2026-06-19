@@ -1,253 +1,97 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Liên hệ — vSME</title>
+  <meta name="description" content="Liên hệ vSME: hỗ trợ chung, mua license thương mại (vSME-SAL), báo lỗi bảo mật và đóng góp mã nguồn." />
   <script src="https://cdn.tailwindcss.com"></script>
-  
   <script>tailwind.config={theme:{extend:{fontFamily:{serif:['Tahoma','Verdana','Geneva','sans-serif'],sans:['Tahoma','Verdana','Geneva','sans-serif']}}}}</script>
-  <style>html{scroll-behavior:smooth}.nav-link:hover{color:#0891b2}</style>
+  <style>html{scroll-behavior:smooth}.nav-link{transition:color 0.2s}.nav-link:hover{color:#0891b2}</style>
 </head>
-<body class="min-h-screen bg-white font-sans">
+<body class="min-h-screen bg-white font-sans text-gray-900">
 
-<!-- NAV -->
-<nav class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <a href="index.html" class="flex items-center space-x-2"><div class="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><span class="text-xl font-serif font-black text-gray-900">vSME</span></a>
-    <div class="hidden md:flex items-center space-x-7 text-sm font-medium text-gray-600">
-      <a href="about.html" class="nav-link transition-colors">Về chúng tôi</a>
-      <a href="services.html" class="nav-link transition-colors">Tính năng</a>
-      <a href="pricing.html" class="nav-link transition-colors">Bảng giá</a>
-          <a href="opensource.html" class="nav-link transition-colors">Mã nguồn mở</a>
-      <a href="testimonials.html" class="nav-link transition-colors">Khách hàng</a>
-      <a href="contact.html" class="text-cyan-600">Liên hệ</a>
-    </div>
-    <div class="flex items-center space-x-3">
-      <a href="login.html" class="text-sm font-medium text-gray-600 hover:text-cyan-600">Đăng nhập</a>
-      <a href="register.html" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">Dùng miễn phí</a>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="bg-gradient-to-br from-gray-50 to-white py-24">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <div class="inline-block text-xs font-semibold text-cyan-600 bg-cyan-50 px-3 py-1 rounded-full mb-5 uppercase tracking-wider">Hỗ trợ & Tư vấn</div>
-    <h1 class="text-5xl md:text-6xl font-serif font-black text-gray-900 mb-6">Liên hệ <span class="text-cyan-600">với chúng tôi</span></h1>
-    <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn. Hãy để lại thông tin — chúng tôi sẽ liên hệ trong vòng 24 giờ.</p>
-  </div>
-</section>
-
-<!-- CONTACT METHODS -->
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-      <div class="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-shadow">
-        <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-5"><svg class="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div>
-        <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Gọi ngay</h3>
-        <p class="text-gray-600 text-sm mb-4">Nói chuyện trực tiếp với chuyên gia tư vấn</p>
-        <a href="tel:18006789" class="text-cyan-600 hover:text-cyan-700 font-medium text-lg">1800 6789</a>
-        <p class="text-xs text-gray-400 mt-2">Miễn phí · Thứ 2–6: 8:00–18:00</p>
+  <!-- NAV -->
+  <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+        <span class="text-xl font-serif font-black text-gray-900">vSME</span>
+      </a>
+      <div class="hidden md:flex items-center space-x-7 text-sm font-medium text-gray-600">
+        <a href="index.html#features" class="nav-link">Tính năng</a>
+        <a href="index.html#modules" class="nav-link">Module</a>
+        <a href="index.html#license" class="nav-link">Giấy phép</a>
+        <a href="opensource.html" class="nav-link">Mã nguồn mở</a>
+        <a href="contact.html" class="text-cyan-600">Liên hệ</a>
       </div>
-      <div class="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-shadow">
-        <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5"><svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
-        <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Gửi email</h3>
-        <p class="text-gray-600 text-sm mb-4">Đặt câu hỏi bất cứ lúc nào</p>
-        <a href="mailto:hello@vsme.vn" class="text-cyan-600 hover:text-cyan-700 font-medium">hello@vsme.vn</a>
-        <p class="text-xs text-gray-400 mt-2">Phản hồi trong vòng 24 giờ</p>
-      </div>
-      <div class="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-shadow">
-        <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-5"><svg class="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
-        <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Đặt lịch demo</h3>
-        <p class="text-gray-600 text-sm mb-4">Xem demo trực tiếp theo giờ bạn muốn</p>
-        <a href="register.html" class="inline-flex items-center bg-cyan-600 hover:bg-cyan-700 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-colors">Đặt lịch ngay<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+      <div class="flex items-center space-x-3">
+        <a href="login.html" class="text-sm font-medium text-gray-600 hover:text-cyan-600">Đăng nhập</a>
+        <a href="register.html" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">Dùng miễn phí</a>
       </div>
     </div>
+  </nav>
 
-    <!-- FORM + OFFICES -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14">
-      <!-- Contact Form -->
-      <div>
-        <div id="form-card" class="bg-white rounded-2xl shadow-xl p-8">
-          <div class="flex items-center mb-6">
-            <svg class="w-6 h-6 text-cyan-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-            <div>
-              <h2 class="text-2xl font-serif font-bold text-gray-900">Gửi tin nhắn</h2>
-              <p class="text-gray-500 text-sm">Điền form bên dưới — chúng tôi phản hồi trong 24h</p>
-            </div>
-          </div>
-          <form id="contact-form" onsubmit="handleSubmit(event)" class="space-y-5">
-            <div class="grid grid-cols-2 gap-4">
-              <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Họ <span class="text-red-500">*</span></label><input type="text" required placeholder="Nguyễn" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" /></div>
-              <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Tên <span class="text-red-500">*</span></label><input type="text" required placeholder="Văn An" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" /></div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label><input type="email" required placeholder="ban@congty.com" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" /></div>
-              <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Điện thoại <span class="text-red-500">*</span></label><input type="tel" required placeholder="0912 345 678" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" /></div>
-            </div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Chủ đề <span class="text-red-500">*</span></label>
-              <select required class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all bg-white">
-                <option value="">-- Chọn chủ đề --</option>
-                <option>Đặt lịch demo sản phẩm</option>
-                <option>Tư vấn giấy phép &amp; cấp phép (vSME-SAL)</option>
-                <option>Hỗ trợ kỹ thuật</option>
-                <option>Hỏi về tính năng cụ thể</option>
-                <option>Hợp tác & đối tác</option>
-                <option>Khác</option>
-              </select>
-            </div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Quy mô doanh nghiệp</label>
-              <select class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all bg-white">
-                <option value="">-- Chọn quy mô --</option>
-                <option>1–10 nhân viên</option>
-                <option>11–50 nhân viên</option>
-                <option>51–200 nhân viên</option>
-                <option>Trên 200 nhân viên</option>
-              </select>
-            </div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Phương thức liên hệ ưu tiên</label>
-              <select class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all bg-white">
-                <option value="">-- Chọn --</option>
-                <option>Email</option>
-                <option>Điện thoại</option>
-                <option>Zalo</option>
-                <option>Gặp trực tiếp</option>
-              </select>
-            </div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Nội dung <span class="text-red-500">*</span></label><textarea required rows="5" placeholder="Mô tả nhu cầu của bạn, câu hỏi cụ thể hoặc các module bạn quan tâm..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"></textarea></div>
-            <button type="submit" id="submit-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3.5 px-4 rounded-xl text-sm transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
-              <span id="btn-text">Gửi tin nhắn</span>
-              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-            </button>
-          </form>
+  <!-- HERO -->
+  <section class="bg-gradient-to-br from-gray-50 to-white py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-serif font-black text-gray-900 mb-5">Liên hệ</h1>
+      <p class="text-lg text-gray-600 leading-relaxed">Mọi câu hỏi về vSME — sử dụng, license thương mại, đóng góp hay bảo mật — đều được chào đón.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT CARDS -->
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-gray-200 rounded-2xl p-8">
+          <div class="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-xl flex items-center justify-center mb-5"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+          <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Email</h3>
+          <p class="text-gray-600 text-sm mb-4 leading-relaxed">Hỗ trợ chung &amp; mua license thương mại. Vui lòng cho biết tên tổ chức, số người dùng thật dự kiến và hình thức sử dụng.</p>
+          <a href="mailto:vuna.aid@gmail.com" class="text-cyan-600 font-medium hover:text-cyan-700">vuna.aid@gmail.com</a>
         </div>
-
-        <!-- Success state (hidden by default) -->
-        <div id="success-card" class="hidden bg-white rounded-2xl shadow-xl p-10 text-center">
-          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"><svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-          <h3 class="text-2xl font-serif font-black text-gray-900 mb-3">Cảm ơn bạn!</h3>
-          <p class="text-gray-600 mb-8">Chúng tôi đã nhận được tin nhắn của bạn và sẽ liên hệ lại trong vòng 24 giờ làm việc.</p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="index.html" class="bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 px-6 rounded-xl text-sm transition-colors">Về trang chủ</a>
-            <button onclick="resetForm()" class="border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-50 font-medium py-3 px-6 rounded-xl text-sm transition-colors">Gửi tin khác</button>
-          </div>
+        <div class="border border-gray-200 rounded-2xl p-8">
+          <div class="w-12 h-12 bg-gray-100 text-gray-800 rounded-xl flex items-center justify-center mb-5"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg></div>
+          <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">GitHub</h3>
+          <p class="text-gray-600 text-sm mb-4 leading-relaxed">Báo lỗi, đề xuất tính năng và gửi pull request. Xem README, giấy phép và hướng dẫn đóng góp tại repo.</p>
+          <a href="https://github.com/vunaaid/msmeai" target="_blank" rel="noopener" class="text-cyan-600 font-medium hover:text-cyan-700">github.com/vunaaid/msmeai</a>
         </div>
       </div>
 
-      <!-- Offices -->
-      <div class="space-y-6">
-        <h2 class="text-3xl font-serif font-black text-gray-900">Văn phòng của chúng tôi</h2>
-
-        <!-- HN Office -->
-        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-lg">
-          <div class="flex items-start space-x-4">
-            <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0"><svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-            <div class="flex-1">
-              <h3 class="text-xl font-serif font-bold text-gray-900 mb-3">Trụ sở Hà Nội</h3>
-              <div class="space-y-2 text-gray-600 text-sm">
-                <div class="flex items-start space-x-2"><svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span>Tầng 12, Tòa nhà Vietcombank Tower,<br/>198 Trần Quang Khải, Hoàn Kiếm, Hà Nội</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span>1800 6789 (Miễn phí)</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span>hanoi@vsme.vn</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Thứ 2–6: 8:00 – 18:00</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- HCM Office -->
-        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-lg">
-          <div class="flex items-start space-x-4">
-            <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0"><svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-            <div class="flex-1">
-              <h3 class="text-xl font-serif font-bold text-gray-900 mb-3">Chi nhánh TP.HCM</h3>
-              <div class="space-y-2 text-gray-600 text-sm">
-                <div class="flex items-start space-x-2"><svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span>Tầng 8, Tòa nhà Bitexco Financial Tower,<br/>2 Hải Triều, Quận 1, TP.HCM</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span>028 6789 0000</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span>hcm@vsme.vn</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Thứ 2–6: 8:00 – 18:00</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Da Nang Office -->
-        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-lg">
-          <div class="flex items-start space-x-4">
-            <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0"><svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-            <div class="flex-1">
-              <h3 class="text-xl font-serif font-bold text-gray-900 mb-3">Chi nhánh Đà Nẵng</h3>
-              <div class="space-y-2 text-gray-600 text-sm">
-                <div class="flex items-start space-x-2"><svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg><span>Tầng 5, 135 Lý Thái Tổ, Hải Châu, Đà Nẵng</span></div>
-                <div class="flex items-center space-x-2"><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span>danang@vsme.vn</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Emergency support -->
-        <div class="bg-cyan-50 border border-cyan-100 rounded-2xl p-6 shadow-lg">
-          <div class="flex items-start space-x-4">
-            <div class="w-10 h-10 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-            <div>
-              <h3 class="text-lg font-serif font-bold text-gray-900 mb-3">Cần hỗ trợ khẩn cấp?</h3>
-              <div class="space-y-2 text-gray-700 text-sm">
-                <p><strong>Hotline khẩn cấp:</strong> 1800 6789 số nhánh 2 (24/7 cho khách hàng)</p>
-                <p><strong>Hỗ trợ Zalo OA:</strong> @vSME.Support (T2–T6: 8:00–22:00)</p>
-                <p><strong>Email kỹ thuật:</strong> support@vsme.vn</p>
-              </div>
-            </div>
-          </div>
+      <!-- Security note -->
+      <div class="mt-6 bg-amber-50 border border-amber-200 rounded-2xl p-6 flex items-start gap-4">
+        <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 19h14a2 2 0 001.84-2.75L13.74 4a2 2 0 00-3.48 0L3.16 16.25A2 2 0 005 19z"/></svg>
+        <div>
+          <h3 class="font-serif font-bold text-gray-900 mb-1">Báo lỗi bảo mật</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">Không mở issue công khai cho lỗ hổng bảo mật. Vui lòng gửi riêng tới <a href="mailto:vuna.aid@gmail.com" class="text-cyan-700 font-medium hover:text-cyan-800">vuna.aid@gmail.com</a>.</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- CTA -->
-<section class="py-20 bg-cyan-600">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <h2 class="text-4xl font-serif font-black text-white mb-4">Bắt đầu hành trình chuyển đổi số</h2>
-    <p class="text-xl text-cyan-100 mb-8 leading-relaxed">Hơn 500 doanh nghiệp SME đã tin tưởng vSME. Bạn sẽ là người tiếp theo?</p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="register.html" class="inline-flex items-center bg-white text-cyan-600 hover:bg-gray-100 font-medium px-8 py-4 rounded-xl text-lg transition-colors">Dùng miễn phí ngay<svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></a>
-      <a href="pricing.html" class="inline-flex items-center border-2 border-white text-white hover:bg-white hover:text-cyan-600 font-medium px-8 py-4 rounded-xl text-lg transition-colors">Xem bảng giá</a>
+  <!-- CTA -->
+  <section class="py-16 bg-cyan-600">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-serif font-black text-white mb-4">Sẵn sàng dùng thử?</h2>
+      <p class="text-lg text-cyan-100 mb-8">Miễn phí cho tổ chức ≤ 4 người dùng thật.</p>
+      <a href="register.html" class="inline-flex items-center justify-center bg-white text-cyan-600 hover:bg-gray-100 font-medium px-8 py-4 rounded-xl text-lg transition-colors">Dùng miễn phí</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FOOTER -->
-<footer class="bg-gray-900 text-white py-16">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
-      <div><div class="flex items-center space-x-2 mb-4"><div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><span class="text-xl font-serif font-black text-cyan-400">vSME</span></div><p class="text-gray-400 text-sm leading-relaxed">Nền tảng quản lý doanh nghiệp SME tích hợp AI.</p></div>
-      <div><h4 class="text-base font-serif font-bold mb-5">Modules</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="services.html" class="hover:text-cyan-400">Kế Toán Tổng Hợp</a></li><li><a href="services.html" class="hover:text-cyan-400">Hóa Đơn Điện Tử</a></li><li><a href="services.html" class="hover:text-cyan-400">Nhân Sự & Lương</a></li><li><a href="services.html" class="hover:text-cyan-400">AI Agent System</a></li></ul></div>
-      <div><h4 class="text-base font-serif font-bold mb-5">Công ty</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="about.html" class="hover:text-cyan-400">Về chúng tôi</a></li><li><a href="pricing.html" class="hover:text-cyan-400">Bảng giá</a></li><li><a href="opensource.html" class="hover:text-cyan-400">Mã nguồn mở</a></li><li><a href="contact.html" class="hover:text-cyan-400">Liên hệ</a></li></ul></div>
-      <div><h4 class="text-base font-serif font-bold mb-5">Liên hệ</h4><div class="space-y-2 text-gray-400 text-sm"><p>📧 hello@vsme.vn</p><p>📞 1800 6789</p><p>📍 Tầng 12, Vietcombank Tower, Hà Nội</p></div></div>
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div>
+          <div class="flex items-center space-x-2 mb-4"><div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><span class="text-xl font-serif font-black text-cyan-400">vSME</span></div>
+          <p class="text-gray-400 text-sm leading-relaxed">ERP AI-native, source-available cho doanh nghiệp nhỏ &amp; siêu nhỏ Việt Nam.</p>
+        </div>
+        <div><h4 class="text-base font-serif font-bold mb-5">Sản phẩm</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="index.html#features" class="hover:text-cyan-400">Tính năng</a></li><li><a href="index.html#modules" class="hover:text-cyan-400">Module</a></li><li><a href="index.html#license" class="hover:text-cyan-400">Giấy phép</a></li></ul></div>
+        <div><h4 class="text-base font-serif font-bold mb-5">Dự án</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="https://github.com/vunaaid/msmeai" target="_blank" rel="noopener" class="hover:text-cyan-400">Mã nguồn (GitHub)</a></li><li><a href="opensource.html" class="hover:text-cyan-400">Mã nguồn mở &amp; Giấy phép</a></li><li><a href="contact.html" class="hover:text-cyan-400">Liên hệ</a></li></ul></div>
+        <div><h4 class="text-base font-serif font-bold mb-5">Liên hệ</h4><div class="space-y-2 text-gray-400 text-sm"><p>📧 <a href="mailto:vuna.aid@gmail.com" class="hover:text-cyan-400">vuna.aid@gmail.com</a></p><p>💻 <a href="https://github.com/vunaaid/msmeai" target="_blank" rel="noopener" class="hover:text-cyan-400">github.com/vunaaid/msmeai</a></p></div></div>
+      </div>
+      <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500"><p>© 2026 Vũ Nguyễn Anh · Giấy phép vSME Source-Available License (vSME-SAL)</p></div>
     </div>
-    <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500"><p>© 2026 vSME. Bản quyền thuộc về vSME Technology JSC.</p></div>
-  </div>
-</footer>
-
-<script>
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    const btnText = document.getElementById('btn-text');
-    btn.disabled = true;
-    btnText.textContent = 'Đang gửi...';
-    setTimeout(() => {
-      document.getElementById('form-card').classList.add('hidden');
-      document.getElementById('success-card').classList.remove('hidden');
-    }, 1200);
-  }
-  function resetForm() {
-    document.getElementById('form-card').classList.remove('hidden');
-    document.getElementById('success-card').classList.add('hidden');
-    document.getElementById('contact-form').reset();
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = false;
-    document.getElementById('btn-text').textContent = 'Gửi tin nhắn';
-  }
-</script>
+  </footer>
 </body>
 </html>
