@@ -9,21 +9,12 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@vsme/db/client";
 import { AccountType, ensureGlobalPermissions, initializeCompanyDefaults } from "@vsme/db";
-import { ok, created, badRequest } from "../../lib/response.js";
-import { createOtp, verifyOtp, isEmailVerified, consumeOtp } from "../../lib/otp-store.js";
-import { sendOtpEmail } from "../../lib/mailer.js";
-import { rateLimit, clientIp } from "../../lib/rate-limit.js";
+import { created, badRequest } from "../../lib/response.js";
+import { rateLimit } from "../../lib/rate-limit.js";
 
 const router = Router();
 
-// ─── Rate limiters (in-memory) ───────────────────────────────────────────────
-const otpIpLimiter = rateLimit({ windowMs: 10 * 60_000, max: 20, message: "Quá nhiều yêu cầu gửi mã từ IP này. Thử lại sau 10 phút." });
-const otpEmailLimiter = rateLimit({
-  windowMs: 10 * 60_000, max: 5,
-  key: (req) => "otp:" + String((req.body as { email?: string })?.email ?? clientIp(req)).toLowerCase(),
-  message: "Bạn đã yêu cầu mã quá nhiều lần. Vui lòng thử lại sau 10 phút.",
-});
-const verifyLimiter = rateLimit({ windowMs: 10 * 60_000, max: 30, message: "Quá nhiều lần thử mã. Thử lại sau." });
+// ─── Rate limiter (in-memory) ────────────────────────────────────────────────
 const signupLimiter = rateLimit({ windowMs: 60 * 60_000, max: 10, message: "Quá nhiều lượt đăng ký từ IP này. Thử lại sau." });
 
 // Phòng ban tuỳ chọn → các role tương ứng (Phòng Hành Chính là bắt buộc, luôn tạo).
@@ -84,39 +75,6 @@ function rolesFromOrg(org: z.infer<typeof registerSchema>["org"]): string[] {
   return [...names];
 }
 
-// POST /api/signup/request-otp — gửi mã OTP tới email (rate-limited)
-router.post("/request-otp", otpIpLimiter, otpEmailLimiter, async (req, res, next) => {
-  try {
-    const emailParsed = z.string().email().safeParse((req.body as { email?: string })?.email);
-    if (!emailParsed.success) return badRequest(res, "Email không hợp lệ");
-    const email = emailParsed.data.toLowerCase();
-
-    const taken = await prisma.user.findFirst({ where: { email }, select: { id: true } });
-    if (taken) return badRequest(res, "Email đã được sử dụng");
-
-    const otp = createOtp(email);
-    try {
-      const { sent } = await sendOtpEmail(email, otp);
-      return ok(res, { sent }); // sent=false → dev mode (xem OTP ở log API)
-    } catch (mailErr) {
-      console.error("[signup] gửi OTP lỗi:", mailErr);
-      return badRequest(res, "Không gửi được mã xác nhận. Vui lòng thử lại sau ít phút.");
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-// POST /api/signup/verify-otp — đối chiếu mã (rate-limited)
-router.post("/verify-otp", verifyLimiter, (req, res) => {
-  const parsed = z.object({ email: z.string().email(), otp: z.string().min(4).max(8) }).safeParse(req.body);
-  if (!parsed.success) return badRequest(res, "Dữ liệu không hợp lệ");
-  if (!verifyOtp(parsed.data.email, parsed.data.otp)) {
-    return badRequest(res, "Mã OTP không đúng hoặc đã hết hạn");
-  }
-  return ok(res, { verified: true });
-});
-
 // POST /api/signup
 router.post("/", signupLimiter, async (req, res, next) => {
   try {
@@ -125,9 +83,6 @@ router.post("/", signupLimiter, async (req, res, next) => {
       return badRequest(res, parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ");
     }
     const { fullName, email, password, companyName, businessType, org, modules } = parsed.data;
-
-    // Bắt buộc đã xác minh OTP qua email trước khi tạo công ty.
-    if (!isEmailVerified(email)) return badRequest(res, "Email chưa được xác minh. Vui lòng nhập mã OTP.");
 
     // Email duy nhất toàn hệ thống (để đăng nhập ở main domain không nhập nhằng).
     const emailTaken = await prisma.user.findFirst({ where: { email }, select: { id: true } });
@@ -179,7 +134,6 @@ router.post("/", signupLimiter, async (req, res, next) => {
       },
     });
 
-    consumeOtp(email);
     return created(res, { companySlug: slug, email, roles: init.roles, recurring: init.recurring });
   } catch (err) {
     next(err);

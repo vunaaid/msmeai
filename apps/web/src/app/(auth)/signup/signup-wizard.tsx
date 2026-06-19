@@ -65,11 +65,6 @@ export function SignupWizard() {
   const [error, setError] = useState<string | null>(null);
   const [showPw, setShowPw] = useState(false);
   const [slugEdited, setSlugEdited] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [otpBusy, setOtpBusy] = useState(false);
-  const [otpMsg, setOtpMsg] = useState<string | null>(null);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -91,35 +86,8 @@ export function SignupWizard() {
   const toggle = (arr: string[], v: string, set: (x: string[]) => void) =>
     set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
-  async function requestOtp() {
-    setOtpBusy(true); setOtpMsg(null);
-    try {
-      const res = await fetch("/api/signup/request-otp", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }),
-      });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || json?.success === false) { setOtpMsg(json?.error?.message ?? "Không gửi được mã"); return; }
-      setOtpSent(true);
-      setOtpMsg(json?.data?.sent === false ? "Chế độ dev — xem mã ở log API." : "Đã gửi mã 6 số tới email của bạn.");
-    } catch { setOtpMsg("Lỗi kết nối"); }
-    finally { setOtpBusy(false); }
-  }
-
-  async function verifyOtpFn() {
-    setOtpBusy(true); setOtpMsg(null);
-    try {
-      const res = await fetch("/api/signup/verify-otp", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, otp }),
-      });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || json?.success === false) { setOtpMsg(json?.error?.message ?? "Mã không đúng"); return; }
-      setOtpVerified(true); setOtpMsg(null);
-    } catch { setOtpMsg("Lỗi kết nối"); }
-    finally { setOtpBusy(false); }
-  }
-
   const canNext =
-    step === 1 ? fullName.trim().length >= 2 && emailValid && password.length >= 6 && otpVerified :
+    step === 1 ? fullName.trim().length >= 2 && emailValid && password.length >= 6 :
     step === 2 ? companyName.trim().length >= 2 && /^[a-z0-9-]{2,40}$/.test(effectiveSlug) :
     step === 3 ? (hasBoard || ceo) :
     true;
@@ -189,7 +157,7 @@ export function SignupWizard() {
             <input className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Nguyễn Văn A" />
           </Field>
           <Field label="Email">
-            <input className={inputCls} type="email" value={email} onChange={(e) => { setEmail(e.target.value); setOtpSent(false); setOtpVerified(false); setOtp(""); setOtpMsg(null); }} placeholder="ban@congty.com" />
+            <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ban@congty.com" />
           </Field>
           <Field label="Mật khẩu (tối thiểu 6 ký tự)">
             <div className="relative">
@@ -198,31 +166,6 @@ export function SignupWizard() {
                 {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
-          </Field>
-
-          {/* OTP xác minh email */}
-          <Field label="Xác minh email (OTP)">
-            {otpVerified ? (
-              <div className="flex items-center gap-2 text-sm text-emerald-400"><Check size={15} /> Email đã xác minh</div>
-            ) : !otpSent ? (
-              <button type="button" disabled={!emailValid || otpBusy} onClick={requestOtp}
-                className="w-full py-2.5 rounded-lg text-sm font-medium bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-white flex items-center justify-center gap-2">
-                {otpBusy ? <><Loader2 size={14} className="animate-spin" /> Đang gửi...</> : "Gửi mã xác nhận tới email"}
-              </button>
-            ) : (
-              <div className="flex items-center gap-2">
-                <input className={inputCls} value={otp} inputMode="numeric"
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Nhập mã 6 số" />
-                <button type="button" disabled={otp.length < 6 || otpBusy} onClick={verifyOtpFn}
-                  className="px-4 py-2.5 rounded-lg text-sm font-semibold bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-white whitespace-nowrap">
-                  Xác minh
-                </button>
-              </div>
-            )}
-            {otpSent && !otpVerified && (
-              <button type="button" onClick={requestOtp} disabled={otpBusy} className="text-xs text-cyan-400 hover:text-cyan-300 mt-1 block">Gửi lại mã</button>
-            )}
-            {otpMsg && <p className="text-xs text-slate-400 mt-1">{otpMsg}</p>}
           </Field>
         </div>
       )}

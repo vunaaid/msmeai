@@ -6,7 +6,6 @@ const ENV_FILE = `${ROOT}/secrets/.env`;
 const HOME = process.env.HOME;
 const MINIO_BIN = `${HOME}/.local/bin/minio`;
 const MINIO_DATA = `${ROOT}/data/minio`;
-const MAILPIT_BIN = `${HOME}/.local/bin/mailpit`;
 
 module.exports = {
   apps: [
@@ -86,21 +85,6 @@ module.exports = {
         AGENT_WORKER_POLL_MS: "4000",
         AGENT_WORKER_CONCURRENCY: "3",
       },
-      watch: false,
-      max_restarts: 10,
-      restart_delay: 3000,
-      max_memory_restart: "512M",
-      min_uptime: "5s",
-      time: true,
-    },
-    {
-      // Mailpit — SMTP test server (nhận OTP email lúc signup). UI: http://localhost:8025
-      name: "vsme-mailpit",
-      script: MAILPIT_BIN,
-      args: `--smtp 0.0.0.0:1025 --listen 0.0.0.0:8025 --db-file ${ROOT}/data/mailpit/mailpit.db`,
-      interpreter: "none",
-      instances: 1,
-      exec_mode: "fork",
       watch: false,
       max_restarts: 10,
       restart_delay: 3000,
