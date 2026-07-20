@@ -19,9 +19,15 @@ BACKUP_DIR="$ROOT/data/backups"
 FORCE=0
 [[ "${1:-}" == "--force" ]] && FORCE=1
 
-# ─── Đọc DATABASE_URL từ .env ────────────────────────────────────────────────
+# ─── Nạp .env ────────────────────────────────────────────────────────────────
+# Nạp TOÀN BỘ .env chứ không riêng DATABASE_URL: bước seed còn cần MINIO_* để
+# upload template tài liệu (thiếu thì nó lặng lẽ bỏ qua phần template), và
+# WEB_PORT để in đúng URL đăng nhập.
 if [[ -f "$ROOT/.env" ]]; then
-  export DATABASE_URL="$(grep -E '^DATABASE_URL=' "$ROOT/.env" | head -1 | sed 's/^DATABASE_URL=//; s/^"//; s/"$//')"
+  set -a
+  # shellcheck disable=SC1091
+  . "$ROOT/.env"
+  set +a
 fi
 if [[ -z "${DATABASE_URL:-}" ]]; then
   echo "❌ DATABASE_URL không có (đã tìm trong $ROOT/.env)"; exit 1

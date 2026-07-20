@@ -253,20 +253,23 @@ async function main() {
   }
 
   console.log("\n✅ Seed completed successfully!");
+  // Cổng lấy từ .env — mặc định 3000/4000 không đúng ở mọi môi trường.
+  const webUrl = `http://localhost:${process.env["WEB_PORT"] ?? "3000"}`;
+
   console.log("\n📌 Login credentials:");
   console.log("");
-  console.log("   [System Admin]  → http://localhost:3000/login");
+  console.log(`   [System Admin]  → ${webUrl}/login`);
   console.log("   Email:    sysadmin@vsme.local");
-  console.log("   Password: Admin@vSME2026!");
-  console.log("   Redirect: /sysadmin");
+  console.log(`   Password: ${INITIAL_ADMIN_PASSWORD}`);
+  console.log("   Redirect: /doi-mat-khau (buộc đổi mật khẩu) → /sysadmin");
   console.log("");
-  console.log("   [Company Admin] → http://localhost:3000/login");
+  console.log(`   [Company Admin] → ${webUrl}/login`);
   console.log("   Email:    admin@vsme.local");
-  console.log("   Password: Company@vSME2026!");
-  console.log("   Redirect: /admin");
+  console.log(`   Password: ${INITIAL_ADMIN_PASSWORD}`);
+  console.log("   Redirect: /doi-mat-khau (buộc đổi mật khẩu) → /admin");
   console.log("");
-  console.log("   [Company User]  → http://demo.localhost:3000/login  (slug: demo)");
-  console.log("   (tạo user mới và đăng nhập từ subdomain công ty)");
+  console.log("   [Company User]  (slug: demo)");
+  console.log("   (tạo user mới và đăng nhập bằng tài khoản công ty)");
 }
 
 main()
