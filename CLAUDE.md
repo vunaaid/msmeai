@@ -5,7 +5,9 @@ Nền tảng quản lý công ty SME tích hợp AI. Monorepo (pnpm + turbo):
   KHÔNG đi qua proxy — endpoint cần gọi từ browser phải nằm ngoài `/api/auth/*`
   (vd `/api/account/*`).
 - `apps/api` — Express API chạy qua `tsx` (không build).
-- `packages/db` — Prisma schema + client (`@vsme/db`). DB: Postgres `vsme_dev` @ localhost:5432.
+- `packages/db` — Prisma schema + client (`@vsme/db`). DB: Postgres `sme_tavia` @ localhost:5432
+  (tên DB lấy từ `DATABASE_URL` trong `.env`). DB cũ `vsme_dev` vẫn còn trên máy nhưng
+  không còn được dùng — giữ lại để tra cứu dữ liệu cũ.
 - `packages/ai-sdk` — agents/skills SDK.
 - Chạy production qua PM2: `pm2 start ecosystem.config.js` (web + api). `.env` ở root.
 - Reverse proxy: cấu hình nginx trỏ về web / api — đặt host/IP trong môi trường riêng của bạn (không hardcode trong repo).
