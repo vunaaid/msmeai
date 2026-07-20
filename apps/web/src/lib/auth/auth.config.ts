@@ -90,6 +90,7 @@ export const authConfig: NextAuthConfig = {
         // permissions KHÔNG lưu vào JWT — load từ DB theo roleId khi cần
         // (tránh cookie phình to gây 502 ở nginx). Xem lib/auth/permissions.ts
         token["aiMode"] = (user as { aiMode?: string }).aiMode ?? "assistant";
+        token["mustChangePassword"] = (user as { mustChangePassword?: boolean }).mustChangePassword ?? false;
       }
       return token;
     },
@@ -107,6 +108,7 @@ export const authConfig: NextAuthConfig = {
       session.user.isSuperAdmin = token["isSuperAdmin"] as boolean;
       session.user.avatarUrl = token["avatarUrl"] as string | null;
       session.user.aiMode = token["aiMode"] as "full" | "assistant";
+      session.user.mustChangePassword = token["mustChangePassword"] as boolean;
       return session;
     },
   },

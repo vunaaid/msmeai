@@ -76,6 +76,7 @@ router.post("/login", async (req, res, next) => {
       id:          user.id,
       email:       user.email,
       name:        user.name,
+      mustChangePassword: user.mustChangePassword,
       accountType: user.accountType as "system_admin" | "company_admin" | "user",
       companyId:   user.companyId,
       companyName: user.company.name,

@@ -10,6 +10,12 @@ import { ensureGlobalPermissions, initializeCompanyDefaults } from "./provisioni
 
 const prisma = new PrismaClient();
 
+// Mật khẩu cài đặt lần đầu cho các tài khoản quản trị được seed. Cả hai tài khoản
+// đều đặt mustChangePassword=true nên mật khẩu này chỉ dùng được đúng một lần:
+// đăng nhập xong hệ thống buộc đổi ngay. Ghi đè bằng biến môi trường
+// INITIAL_ADMIN_PASSWORD khi cài đặt ở môi trường thật.
+const INITIAL_ADMIN_PASSWORD = process.env["INITIAL_ADMIN_PASSWORD"] ?? "Abc@123";
+
 // Roles / modules / việc định kỳ mặc định được định nghĩa trong ./provisioning.ts
 // (dùng chung cho seed + luồng tạo công ty mới).
 
@@ -62,7 +68,7 @@ async function main() {
   console.log(`  ✓ ${init.roles} roles + module configs + ${init.recurring} recurring work created`);
 
   // 4. Tạo users
-  const passwordHash = await bcrypt.hash("Admin@vSME2026!", 12);
+  const passwordHash = await bcrypt.hash(INITIAL_ADMIN_PASSWORD, 12);
 
   // 4a. System Admin — thuộc Platform company, bypass mọi permission check
   console.log("  → Creating system admin user...");
@@ -77,9 +83,10 @@ async function main() {
       isSuperAdmin: true,
       accountType: AccountType.system_admin,
       isActive: true,
+      mustChangePassword: true,
     },
   });
-  console.log(`  ✓ System Admin: ${sysAdmin.email} | Password: Admin@vSME2026!`);
+  console.log(`  ✓ System Admin: ${sysAdmin.email} | Password: ${INITIAL_ADMIN_PASSWORD} (buộc đổi khi đăng nhập)`);
 
   // 4b. Company Admin — thuộc Demo company, quản trị company của mình
   console.log("  → Creating company admin user...");
@@ -87,7 +94,10 @@ async function main() {
     where: { companyId: company.id, name: "Quản Trị Viên Công Ty" },
   });
   if (!companyAdminRole) throw new Error("Company Admin role not found — run seed in order");
-  const companyAdminHash = await bcrypt.hash("Company@vSME2026!", 12);
+  // Mật khẩu cài đặt lần đầu — cố tình đơn giản và buộc đổi ngay khi đăng nhập.
+  // update: KHÔNG đụng tới passwordHash/mustChangePassword để chạy lại seed trên
+  // DB đang dùng không đặt lại mật khẩu người dùng đã tự đổi.
+  const companyAdminHash = await bcrypt.hash(INITIAL_ADMIN_PASSWORD, 12);
   const companyAdmin = await prisma.user.upsert({
     where: { companyId_email: { companyId: company.id, email: "admin@vsme.local" } },
     update: { accountType: AccountType.company_admin, roleId: companyAdminRole.id, isActive: true },
@@ -99,9 +109,10 @@ async function main() {
       roleId: companyAdminRole.id,
       accountType: AccountType.company_admin,
       isActive: true,
+      mustChangePassword: true,
     },
   });
-  console.log(`  ✓ Company Admin: ${companyAdmin.email} | Password: Company@vSME2026!`);
+  console.log(`  ✓ Company Admin: ${companyAdmin.email} | Password: ${INITIAL_ADMIN_PASSWORD} (buộc đổi khi đăng nhập)`);
 
   // (Module configs đã được tạo trong initializeCompanyDefaults ở bước 3.)
 

@@ -22,6 +22,7 @@ import notificationsRouter from "./modules/notifications/notifications.router.js
 import pushRouter         from "./modules/push/push.router.js";
 import claudeCliRouter    from "./modules/claude-cli/claude-cli.router.js";
 import authRouter         from "./modules/auth/auth.router.js";
+import accountRouter      from "./modules/account/account.router.js";
 import signupRouter       from "./modules/auth/signup.router.js";
 import documentsRouter    from "./modules/documents/documents.router.js";
 import foldersRouter      from "./modules/folders/folders.router.js";
@@ -93,6 +94,7 @@ export function createApp() {
   const api = express.Router();
 
   api.use("/auth",          authRouter);       // public — trước authMiddleware
+  api.use("/account",       accountRouter);     // public — đổi mật khẩu bằng mật khẩu hiện tại
   api.use("/signup",        signupRouter);      // public — đăng ký dùng thử (Phase 2)
   api.use("/users",         usersRouter);
   api.use("/roles",         rolesRouter);

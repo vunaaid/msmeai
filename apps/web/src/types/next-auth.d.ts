@@ -19,6 +19,7 @@ declare module "next-auth" {
       isSuperAdmin: boolean;
       avatarUrl: string | null;
       aiMode?: "full" | "assistant";
+      mustChangePassword?: boolean;
     } & DefaultSession["user"];
   }
 
@@ -32,5 +33,6 @@ declare module "next-auth" {
     roleLevel: string | null;
     isSuperAdmin: boolean;
     avatarUrl: string | null;
+    mustChangePassword?: boolean;
   }
 }
