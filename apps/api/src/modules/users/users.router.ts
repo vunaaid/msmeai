@@ -140,6 +140,8 @@ router.post("/", requireAuth, wrap(async (req, res) => {
       departmentId: data.departmentId,
       managerId:    data.managerId ?? null,
       phone:        data.phone,
+      // Admin đặt mật khẩu tạm → buộc người dùng mới tự đổi ở lần đăng nhập đầu.
+      mustChangePassword: true,
     },
     select: {
       id: true, email: true, name: true, createdAt: true,
