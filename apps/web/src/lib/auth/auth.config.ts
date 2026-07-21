@@ -74,7 +74,13 @@ export const authConfig: NextAuthConfig = {
       return baseUrl;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Cập nhật session không cần đăng nhập lại — vd đổi tên công ty ở Cài đặt.
+      // Chỉ nhận đúng các field cho phép; KHÔNG tin toàn bộ payload từ client.
+      if (trigger === "update" && session && typeof session === "object") {
+        const s = session as { companyName?: unknown };
+        if (typeof s.companyName === "string") token["companyName"] = s.companyName;
+      }
       if (user) {
         // Khi đăng nhập lần đầu, copy data vào token
         token["id"] = user.id;
