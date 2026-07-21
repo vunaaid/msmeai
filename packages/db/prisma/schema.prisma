@@ -245,6 +245,11 @@ model User {
   isSuperAdmin   Boolean     @default(false) @map("is_super_admin")
   accountType    AccountType @default(user) @map("account_type")
 
+  // Bắt buộc đổi mật khẩu ở lần đăng nhập kế tiếp (tài khoản cài đặt lần đầu,
+  // hoặc sau khi admin reset mật khẩu). Login vẫn thành công nhưng client
+  // phải chuyển thẳng sang màn đổi mật khẩu.
+  mustChangePassword Boolean @default(false) @map("must_change_password")
+
   // NextAuth fields
   emailVerified DateTime? @map("email_verified")
 

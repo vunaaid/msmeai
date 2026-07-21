@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { prisma } from "@vsme/db/client";
 import Link from "next/link";
-import { Users, Package, FileText, Shield, CalendarClock, Bot } from "lucide-react";
+import { Users, Package, FileText, Shield, CalendarClock, Bot, Building2 } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata: Metadata = { title: "Quản Trị" };
@@ -67,6 +67,14 @@ export default async function AdminPage() {
       iconColor: "text-fuchsia-400",
       iconBg: "bg-fuchsia-500/10",
     },
+    {
+      title: "Cài Đặt Công Ty",
+      value: session?.user.companyName ?? "Thông tin",
+      icon: Building2,
+      href: "/admin/company",
+      iconColor: "text-teal-400",
+      iconBg: "bg-teal-500/10",
+    },
   ];
 
   return (
@@ -104,6 +112,7 @@ export default async function AdminPage() {
         <h2 className="text-base font-semibold text-white mb-4">Truy Cập Nhanh</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
+            { label: "Cài đặt công ty", href: "/admin/company" },
             { label: "Quản lý người dùng", href: "/admin/users" },
             { label: "Quản lý AI Agents", href: "/admin/agents" },
             { label: "Phân quyền vai trò", href: "/admin/roles" },

@@ -18,13 +18,23 @@ export default auth(req => {
   const isPublicPage = PUBLIC_PAGES.has(pathname);
   const isApiRoute = pathname.startsWith('/api/');
 
+  // Tài khoản cài đặt lần đầu (hoặc vừa bị admin reset) buộc phải đổi mật khẩu
+  // trước khi dùng bất kỳ trang nào khác.
+  const mustChange = Boolean(session?.user.mustChangePassword);
+  const isChangePasswordPage = pathname === '/doi-mat-khau';
+
   if (isPublicPage) {
     // Đã login mà vào /login → đưa vào dashboard theo loại tài khoản
     if (session && pathname === '/login') {
+      if (mustChange) return NextResponse.redirect(new URL('/doi-mat-khau', req.url));
       const dest = session.user.accountType === 'system_admin' ? '/sysadmin' : '/admin';
       return NextResponse.redirect(new URL(dest, req.url));
     }
     return NextResponse.next();
+  }
+
+  if (mustChange && !isChangePasswordPage && !isApiRoute) {
+    return NextResponse.redirect(new URL('/doi-mat-khau', req.url));
   }
 
   // Chưa login → API trả 401 JSON, page thì redirect /login
