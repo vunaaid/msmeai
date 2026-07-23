@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@vsme/db": "workspace:*",
-    "bullmq": "^5.0.0"
+    "bullmq": "^5.80.11"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
