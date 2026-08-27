@@ -15,15 +15,15 @@
   "dependencies": {
     "@vsme/db": "workspace:*",
     "minio": "^8.0.0",
-    "mammoth": "^1.8.0",
+    "mammoth": "^1.12.1",
     "exceljs": "^4.4.0",
     "docx": "^9.0.0",
-    "docxtemplater": "^3.50.0",
+    "docxtemplater": "^3.69.3",
     "pizzip": "^3.1.7",
     "officeparser": "^4.1.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.20.1"
   }
 }
